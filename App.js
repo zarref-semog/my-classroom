@@ -9,13 +9,14 @@ import { MyStudentsScreen } from './src/screens/MyStudentsScreen';
 import { MyActivitiesScreen } from './src/screens/MyActivitiesScreen';
 import { MyAttendancesScreen } from './src/screens/MyAttendanceScreen';
 import { MyAssessmentsScreen } from './src/screens/MyAssessmentsScreen';
+import { MyScoresScreen } from './src/screens/MyScoresScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function MyClassroomTabs() {
   return (
-    <Tab.Navigator screenOptions={{headerShown: false}}>
+    <Tab.Navigator screenOptions={{headerShown: false, }}>
       <Tab.Screen name='Classes' component={MyClassesScreen} />
       <Tab.Screen name='Activities' component={MyActivitiesScreen} />
       <Tab.Screen name='Schedule' component={MyScheduleScreen} />
@@ -30,6 +31,7 @@ function MyClassroomStack() {
       <Stack.Screen name='Students' component={MyStudentsScreen} />
       <Stack.Screen name='Attendances' component={MyAttendancesScreen} />
       <Stack.Screen name='Assessments' component={MyAssessmentsScreen} />
+      <Stack.Screen name='Scores' component={MyScoresScreen} />
     </Stack.Navigator>
   );
 }

@@ -2,36 +2,37 @@ import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 
-const Item = ({ navigation, item}) => {
+const Item = ({ navigation, item }) => {
     const [showOptions, setShowOptions] = useState(false);
 
     return (
         <TouchableOpacity style={styles.listContainer} onPress={() => setShowOptions(!showOptions)} back>
-                <View style={styles.listItem}>
-                    <Text style={styles.listTitle}>{`${item.serie} - ${item.turma}`}</Text>
-                    <Text style={styles.listTitle}>{item.qtdAlunos}</Text>
-                </View>
-                {showOptions && (
-                    <View style={styles.listOptions}>
-                        <View style={styles.listButton}>
-                            <Button title='Alunos' onPress={() => { navigation.navigate('Students')}} />
-                        </View>
-                        <View style={styles.listButton}>
-                            <Button title='Chamadas' onPress={() => { navigation.navigate('Attendances') }} />
-                        </View>
-                        <View style={styles.listButton}>
-                            <Button title='Avaliações' onPress={() => { navigation.navigate('Assessments')}} />
-                        </View>
+            <View style={styles.listItem}>
+                <Text style={styles.listTitle}>{`${item.serie} - ${item.turma}`}</Text>
+                <Text style={styles.listTitle}>{item.qtdAlunos}</Text>
+            </View>
+            {showOptions && (
+                <View style={styles.listOptions}>
+                    <View style={styles.listButton}>
+                        <Button title='Alunos' onPress={() => { navigation.navigate('Students') }} />
                     </View>
-                )}
+                    <View style={styles.listButton}>
+                        <Button title='Chamadas' onPress={() => { navigation.navigate('Attendances') }} />
+                    </View>
+                    <View style={styles.listButton}>
+                        <Button title='Avaliações' onPress={() => { navigation.navigate('Assessments') }} />
+                    </View>
+                </View>
+            )}
         </TouchableOpacity>
     );
 }
 
 export function MyActivitiesScreen({ navigation }) {
     const [pesquisa, setPesquisa] = useState('');
-    const [serie, setSerie] = useState('');
     const [turma, setTurma] = useState('');
+    const [titulo, setTitulo] = useState('');
+    const [descricao, setDescricao] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
 
     const atividades = [
@@ -54,26 +55,26 @@ export function MyActivitiesScreen({ navigation }) {
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Text style={styles.title}>Minhas Atividades</Text>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setPesquisa}
-                            value={pesquisa}
-                            placeholder='Buscar Turma'
-                        />
-                        <Button title='Adicionar' onPress={() => setModalVisible(true)} />
-                    </View>
-                    <FlatList
-                        data={turmasFiltradas}
-                        renderItem={({ item }) => <Item navigation={navigation} item={item} />}
-                        keyExtractor={item => item.id}
-                        style={styles.list}
-                    />
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Minhas Atividades</Text>
                 </View>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPesquisa}
+                        value={pesquisa}
+                        placeholder='Buscar Turma'
+                    />
+                    <Button title='Adicionar' onPress={() => setModalVisible(true)} />
+                </View>
+                <FlatList
+                    data={turmasFiltradas}
+                    renderItem={({ item }) => <Item navigation={navigation} item={item} />}
+                    keyExtractor={item => item.id}
+                    style={styles.list}
+                />
+            </View>
             <Modal
                 animationType='fade'
                 transparent={true}
@@ -82,18 +83,24 @@ export function MyActivitiesScreen({ navigation }) {
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Nova Turma</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setSerie}
-                            value={serie}
-                            placeholder='Série'
-                        />
+                        <Text style={styles.modalTitle}>Nova Atividade</Text>
                         <TextInput
                             style={styles.modalInput}
                             onChangeText={setTurma}
                             value={turma}
                             placeholder='Turma'
+                        />
+                        <TextInput
+                            style={styles.modalInput}
+                            onChangeText={setTitulo}
+                            value={titulo}
+                            placeholder='Título'
+                        />
+                        <TextInput
+                            style={styles.modalInput}
+                            onChangeText={setDescricao}
+                            value={descricao}
+                            placeholder='Descrição'
                         />
                         <View style={styles.modalButtonContainer}>
                             <TouchableOpacity

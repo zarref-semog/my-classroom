@@ -2,25 +2,25 @@ import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 
-const Item = ({ navigation, item}) => {
+const Item = ({ navigation, item, selected, onPress}) => {
     const [showOptions, setShowOptions] = useState(false);
 
     return (
-        <TouchableOpacity style={styles.listContainer} onPress={() => setShowOptions(!showOptions)} back>
+        <TouchableOpacity style={styles.listContainer} selected={selected} onPress={onPress} back>
                 <View style={styles.listItem}>
                     <Text style={styles.listTitle}>{item.nome}</Text>
                     <Text style={styles.listTitle}>{item.nota}</Text>
                 </View>
-                {showOptions && (
+                {(selected === item.id) && (
                     <View style={styles.listOptions}>
                         <View style={styles.listButton}>
-                            <Button title='Alunos' onPress={() => { navigation.navigate('Students')}} />
+                            <Button title='Notas' onPress={() => { navigation.navigate('Scores')}} />
                         </View>
                         <View style={styles.listButton}>
-                            <Button title='Chamadas' onPress={() => { navigation.navigate('Attendances') }} />
+                            <Button title='Editar' onPress={() => {}} />
                         </View>
                         <View style={styles.listButton}>
-                            <Button title='Avaliações' onPress={() => { navigation.navigate('Assessments')}} />
+                            <Button title='Excluir' onPress={() => {}} />
                         </View>
                     </View>
                 )}
@@ -33,19 +33,7 @@ export function MyAssessmentsScreen({ navigation }) {
     const [serie, setSerie] = useState('');
     const [turma, setTurma] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-
-    // const notas = [
-    //     { id: '1', nome: 'João Silva', nota: '9,5'},
-    //     { id: '2', nome: 'Maria Souza', nota: '7,9'},
-    //     { id: '3', nome: 'Carlos Pereira', nota: '6,8'},
-    //     { id: '4', nome: 'Ana Lima', nota: '5,4' },
-    //     { id: '5', nome: 'Pedro Santos', nota: '10,0'},
-    //     { id: '6', nome: 'Julia Oliveira', nota: '9,8'},
-    //     { id: '7', nome: 'Lucas Ferreira', nota: '2,5'},
-    //     { id: '8', nome: 'Mariana Costa', nota: '0,0'},
-    //     { id: '9', nome: 'Felipe Alves', nota: '7,3'},
-    //     { id: '10', nome: 'Larissa Mendes', nota: '10,0'}
-    // ];
+    const [selectedOption, setSelectedOption] = useState(null);
 
     const avaliacoes = [
         { id: '1', nome: 'AV 1', nota: '7,0'},
@@ -61,11 +49,15 @@ export function MyAssessmentsScreen({ navigation }) {
         aluno.nota.toLowerCase().includes(pesquisa.toLowerCase())
     );
 
+    function handleSelectedOption(item) {
+        setSelectedOption(item.id);
+    }
+
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
                 <View style={styles.container}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>Avaliações Turma 1</Text>
+                        <Text style={styles.title}>Avaliações - Turma 1</Text>
                     </View>
                     <View style={styles.inputContainer}>
                         <TextInput
@@ -78,7 +70,7 @@ export function MyAssessmentsScreen({ navigation }) {
                     </View>
                     <FlatList
                         data={notasFiltradas}
-                        renderItem={({ item }) => <Item navigation={navigation} item={item} />}
+                        renderItem={({ item }) => <Item navigation={navigation} item={item} selected={selectedOption} onPress={() => {handleSelectedOption(item)}} />}
                         keyExtractor={item => item.id}
                         style={styles.list}
                     />

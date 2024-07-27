@@ -6,19 +6,16 @@ const Item = ({ navigation, item, selected, onPress }) => {
     return (
         <TouchableOpacity style={styles.listContainer} onPress={onPress} back>
             <View style={styles.listItem}>
-                <Text style={styles.listTitle}>{`${item.serie} - ${item.turma}`}</Text>
-                <Text style={styles.listTitle}>{item.qtdAlunos}</Text>
+                <Text style={styles.listTitle}>{item.nome}</Text>
+                <Text style={styles.listTitle}>{item.nota}</Text>
             </View>
             {(selected === item.id) && (
                 <View style={styles.listOptions}>
                     <View style={styles.listButton}>
-                        <Button title='Alunos' onPress={() => { navigation.navigate('Students') }} />
+                        <Button title='Editar' onPress={() => {}} />
                     </View>
                     <View style={styles.listButton}>
-                        <Button title='Chamada' onPress={() => { navigation.navigate('Attendances') }} />
-                    </View>
-                    <View style={styles.listButton}>
-                        <Button title='Avaliações' onPress={() => { navigation.navigate('Assessments') }} />
+                        <Button title='Excluir' onPress={() => {}} />
                     </View>
                 </View>
             )}
@@ -26,50 +23,40 @@ const Item = ({ navigation, item, selected, onPress }) => {
     );
 }
 
-export function MyClassesScreen({ navigation }) {
+export function MyScoresScreen({ navigation }) {
     const [pesquisa, setPesquisa] = useState('');
     const [serie, setSerie] = useState('');
     const [turma, setTurma] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const [turmas, setTurmas] = useState([
-        { id: '1', serie: '8º ano', turma: 'A', qtdAlunos: 22 },
-        { id: '2', serie: '7º ano', turma: 'B', qtdAlunos: 32 },
-        { id: '3', serie: '6º ano', turma: 'C', qtdAlunos: 25 },
-        { id: '4', serie: '9º ano', turma: 'D', qtdAlunos: 18 },
-        { id: '5', serie: '5º ano', turma: 'E', qtdAlunos: 31 },
-        { id: '6', serie: '8º ano', turma: 'A', qtdAlunos: 22 },
-        { id: '7', serie: '7º ano', turma: 'B', qtdAlunos: 32 },
-        { id: '8', serie: '6º ano', turma: 'C', qtdAlunos: 25 },
-        { id: '9', serie: '9º ano', turma: 'D', qtdAlunos: 18 },
-        { id: '10', serie: '5º ano', turma: 'E', qtdAlunos: 31 },
-    ]);
+    const alunos = [
+        { id: '1', nome: 'João Silva', nota: '9,5' },
+        { id: '2', nome: 'Maria Souza', nota: '7,9' },
+        { id: '3', nome: 'Carlos Pereira', nota: '6,8' },
+        { id: '4', nome: 'Ana Lima', nota: '5,4' },
+        { id: '5', nome: 'Pedro Santos', nota: '10,0' },
+        { id: '6', nome: 'Julia Oliveira', nota: '9,8' },
+        { id: '7', nome: 'Lucas Ferreira', nota: '2,5' },
+        { id: '8', nome: 'Mariana Costa', nota: '0,0' },
+        { id: '9', nome: 'Felipe Alves', nota: '7,3' },
+        { id: '10', nome: 'Larissa Mendes', nota: '10,0' }
+    ];
 
-    const turmasFiltradas = turmas.filter(turma =>
-        turma.serie.toLowerCase().includes(pesquisa.toLowerCase()) ||
-        turma.turma.toLowerCase().includes(pesquisa.toLowerCase())
+    const alunosFiltrados = alunos.filter(aluno =>
+        aluno.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
+        aluno.nota.toLowerCase().includes(pesquisa.toLowerCase())
     );
-
-    function clear() {
-        setSerie('');
-        setTurma('');
-    }
 
     function handleSelectedItem(item) {
         setSelectedItem(item.id);
-    }
-
-    function addNewClass(turma) {
-        let maxId = turmas.sort((a, b) => a.id - b.id).lastIndexOf("id");
-        setTurmas([...turmas, { id: `${maxId++}`, ...turma }]);
     }
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Minhas Turmas</Text>
+                    <Text style={styles.title}>Notas AV1 - Turma 1</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -81,7 +68,7 @@ export function MyClassesScreen({ navigation }) {
                     <Button title='Adicionar' onPress={() => setModalVisible(true)} />
                 </View>
                 <FlatList
-                    data={turmasFiltradas}
+                    data={alunosFiltrados}
                     renderItem={({ item }) => <Item navigation={navigation} item={item} selected={selectedItem} onPress={() => { handleSelectedItem(item) }} />}
                     keyExtractor={item => item.id}
                     style={styles.list}
