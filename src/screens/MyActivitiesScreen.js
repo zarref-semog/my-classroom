@@ -1,36 +1,63 @@
 import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { Item } from '../components/ListItem';
 
-function HomeScreen({ navigation }) {
+const Item = ({ navigation, item}) => {
+    const [showOptions, setShowOptions] = useState(false);
+
+    return (
+        <TouchableOpacity style={styles.listContainer} onPress={() => setShowOptions(!showOptions)} back>
+                <View style={styles.listItem}>
+                    <Text style={styles.listTitle}>{`${item.serie} - ${item.turma}`}</Text>
+                    <Text style={styles.listTitle}>{item.qtdAlunos}</Text>
+                </View>
+                {showOptions && (
+                    <View style={styles.listOptions}>
+                        <View style={styles.listButton}>
+                            <Button title='Alunos' onPress={() => { navigation.navigate('Students')}} />
+                        </View>
+                        <View style={styles.listButton}>
+                            <Button title='Chamadas' onPress={() => { navigation.navigate('Attendances') }} />
+                        </View>
+                        <View style={styles.listButton}>
+                            <Button title='Avaliações' onPress={() => { navigation.navigate('Assessments')}} />
+                        </View>
+                    </View>
+                )}
+        </TouchableOpacity>
+    );
+}
+
+export function MyActivitiesScreen({ navigation }) {
     const [pesquisa, setPesquisa] = useState('');
     const [serie, setSerie] = useState('');
     const [turma, setTurma] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
 
-    const turmas = [
+    const atividades = [
         { id: '1', serie: '8º ano', turma: 'A', qtdAlunos: 22 },
         { id: '2', serie: '7º ano', turma: 'B', qtdAlunos: 32 },
         { id: '3', serie: '6º ano', turma: 'C', qtdAlunos: 25 },
         { id: '4', serie: '9º ano', turma: 'D', qtdAlunos: 18 },
         { id: '5', serie: '5º ano', turma: 'E', qtdAlunos: 31 },
-        { id: '6', serie: '8º ano', turma: 'A', qtdAlunos: 22 },
-        { id: '7', serie: '7º ano', turma: 'B', qtdAlunos: 32 },
-        { id: '8', serie: '6º ano', turma: 'C', qtdAlunos: 25 },
-        { id: '9', serie: '9º ano', turma: 'D', qtdAlunos: 18 },
-        { id: '10', serie: '5º ano', turma: 'E', qtdAlunos: 31 },
+        { id: '6', serie: '8º ano', turma: 'F', qtdAlunos: 23 },
+        { id: '7', serie: '7º ano', turma: 'G', qtdAlunos: 19 },
+        { id: '8', serie: '6º ano', turma: 'H', qtdAlunos: 27 },
+        { id: '9', serie: '9º ano', turma: 'I', qtdAlunos: 30 },
+        { id: '10', serie: '5º ano', turma: 'J', qtdAlunos: 31 },
     ];
 
-    const turmasFiltradas = turmas.filter(turma =>
+    const turmasFiltradas = atividades.filter(turma =>
         turma.serie.toLowerCase().includes(pesquisa.toLowerCase()) ||
         turma.turma.toLowerCase().includes(pesquisa.toLowerCase())
     );
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
-            <ScrollView>
                 <View style={styles.container}>
+                    <View style={styles.header}>
+                        <Text style={styles.title}>Minhas Atividades</Text>
+                    </View>
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
@@ -42,12 +69,11 @@ function HomeScreen({ navigation }) {
                     </View>
                     <FlatList
                         data={turmasFiltradas}
-                        renderItem={({ item }) => <Item item={item} />}
+                        renderItem={({ item }) => <Item navigation={navigation} item={item} />}
                         keyExtractor={item => item.id}
                         style={styles.list}
                     />
                 </View>
-            </ScrollView>
             <Modal
                 animationType='fade'
                 transparent={true}
@@ -93,7 +119,13 @@ function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        marginTop: 50,
+        paddingHorizontal: 16,
+        paddingBottom: 0,
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 20,
     },
     inputContainer: {
         flexDirection: 'row',
@@ -166,6 +198,29 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
     },
+    listContainer: {
+        backgroundColor: '#679289',
+        marginBottom: 10,
+    },
+    listItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        height: 80,
+    },
+    listOptions: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 5,
+        marginTop: 10,
+        marginBottom: 10
+    },
+    listButton: {
+        marginRight: 5,
+    },
+    listTitle: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
 });
-
-export default HomeScreen;
