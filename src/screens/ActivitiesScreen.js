@@ -1,66 +1,75 @@
 import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { RadioButton } from '../components/RadioButton';
+import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 
-const Item = ({ item }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
-
-    const handleOptionChange = (option) => {
-        setSelectedOption(option);
-    };
+const Item = ({ navigation, item }) => {
+    const [showOptions, setShowOptions] = useState(false);
 
     return (
-        <View style={[styles.listItem, styles.listContainer]}>
-            <Text style={styles.listTitle}>{item.nome}</Text>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-                <RadioButton selected={selectedOption === 'option1'} onPress={() => { handleOptionChange('option1') }} color='blue' />
-                <RadioButton selected={selectedOption === 'option2'} onPress={() => { handleOptionChange('option2') }} color='red' />
+        <TouchableOpacity style={styles.listContainer} onPress={() => setShowOptions(!showOptions)}>
+            <View style={styles.listItem}>
+                <Text style={styles.listTitle}>{`${item.serie} - ${item.turma}`}</Text>
+                <Text style={styles.listTitle}>{item.qtdAlunos}</Text>
             </View>
-        </View>
+            {showOptions && (
+                <View style={styles.listOptions}>
+                    <View style={styles.listButton}>
+                        <Button title='Alunos' onPress={() => { navigation.navigate('Students') }} />
+                    </View>
+                    <View style={styles.listButton}>
+                        <Button title='Chamadas' onPress={() => { navigation.navigate('Attendances') }} />
+                    </View>
+                    <View style={styles.listButton}>
+                        <Button title='Avaliações' onPress={() => { navigation.navigate('Assessments') }} />
+                    </View>
+                </View>
+            )}
+        </TouchableOpacity>
     );
 }
 
-export function MyAttendancesScreen({ navigation }) {
+export function ActivitiesScreen({ navigation }) {
     const [pesquisa, setPesquisa] = useState('');
-    const [serie, setSerie] = useState('');
     const [turma, setTurma] = useState('');
+    const [titulo, setTitulo] = useState('');
+    const [descricao, setDescricao] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
 
-    const chamadas = [
-        { id: '1', nome: 'João Silva' },
-        { id: '2', nome: 'Maria Souza' },
-        { id: '3', nome: 'Carlos Pereira' },
-        { id: '4', nome: 'Ana Lima' },
-        { id: '5', nome: 'Pedro Santos' },
-        { id: '6', nome: 'Julia Oliveira' },
-        { id: '7', nome: 'Lucas Ferreira' },
-        { id: '8', nome: 'Mariana Costa' },
-        { id: '9', nome: 'Felipe Alves' },
-        { id: '10', nome: 'Larissa Mendes' }
+    const atividades = [
+        { id: '1', serie: '8º ano', turma: 'A', qtdAlunos: 22 },
+        { id: '2', serie: '7º ano', turma: 'B', qtdAlunos: 32 },
+        { id: '3', serie: '6º ano', turma: 'C', qtdAlunos: 25 },
+        { id: '4', serie: '9º ano', turma: 'D', qtdAlunos: 18 },
+        { id: '5', serie: '5º ano', turma: 'E', qtdAlunos: 31 },
+        { id: '6', serie: '8º ano', turma: 'F', qtdAlunos: 23 },
+        { id: '7', serie: '7º ano', turma: 'G', qtdAlunos: 19 },
+        { id: '8', serie: '6º ano', turma: 'H', qtdAlunos: 27 },
+        { id: '9', serie: '9º ano', turma: 'I', qtdAlunos: 30 },
+        { id: '10', serie: '5º ano', turma: 'J', qtdAlunos: 31 },
     ];
 
-    const chamadasFiltradas = chamadas.filter(chamada =>
-        chamada.nome.toLowerCase().includes(pesquisa.toLowerCase())
+    const turmasFiltradas = atividades.filter(turma =>
+        turma.serie.toLowerCase().includes(pesquisa.toLowerCase()) ||
+        turma.turma.toLowerCase().includes(pesquisa.toLowerCase())
     );
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Chamada Turma 1</Text>
+                    <Text style={styles.title}>Minhas Atividades</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         onChangeText={setPesquisa}
                         value={pesquisa}
-                        placeholder='Buscar Aluno'
+                        placeholder='Buscar Turma'
                     />
                     <Button title='Adicionar' onPress={() => setModalVisible(true)} />
                 </View>
                 <FlatList
-                    data={chamadasFiltradas}
+                    data={turmasFiltradas}
                     renderItem={({ item }) => <Item navigation={navigation} item={item} />}
                     keyExtractor={item => item.id}
                     style={styles.list}
@@ -74,18 +83,24 @@ export function MyAttendancesScreen({ navigation }) {
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Nova Turma</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setSerie}
-                            value={serie}
-                            placeholder='Série'
-                        />
+                        <Text style={styles.modalTitle}>Nova Atividade</Text>
                         <TextInput
                             style={styles.modalInput}
                             onChangeText={setTurma}
                             value={turma}
                             placeholder='Turma'
+                        />
+                        <TextInput
+                            style={styles.modalInput}
+                            onChangeText={setTitulo}
+                            value={titulo}
+                            placeholder='Título'
+                        />
+                        <TextInput
+                            style={styles.modalInput}
+                            onChangeText={setDescricao}
+                            value={descricao}
+                            placeholder='Descrição'
                         />
                         <View style={styles.modalButtonContainer}>
                             <TouchableOpacity

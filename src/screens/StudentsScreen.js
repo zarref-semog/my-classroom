@@ -1,80 +1,65 @@
 import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
-import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView} from 'react-native-gesture-handler';
 
-const Item = ({ navigation, item, selected, onPress}) => {
-    const [showOptions, setShowOptions] = useState(false);
-
+const Item = ({ item }) => {
     return (
-        <TouchableOpacity style={styles.listContainer} selected={selected} onPress={onPress} back>
-                <View style={styles.listItem}>
-                    <Text style={styles.listTitle}>{item.nome}</Text>
-                    <Text style={styles.listTitle}>{item.nota}</Text>
+            <View style={[styles.listItem, styles.listContainer]}>
+                <Text style={styles.listTitle}>{item.nome}</Text>
+                <View style={{flexDirection: 'row', gap: 20}}>
+                    <Text style={{...styles.listTitle, color: 'blue'}}>10</Text>
+                    <Text style={{...styles.listTitle, color: 'red'}}>10</Text>
                 </View>
-                {(selected === item.id) && (
-                    <View style={styles.listOptions}>
-                        <View style={styles.listButton}>
-                            <Button title='Notas' onPress={() => { navigation.navigate('Scores')}} />
-                        </View>
-                        <View style={styles.listButton}>
-                            <Button title='Editar' onPress={() => {}} />
-                        </View>
-                        <View style={styles.listButton}>
-                            <Button title='Excluir' onPress={() => {}} />
-                        </View>
-                    </View>
-                )}
-        </TouchableOpacity>
+            </View>
     );
 }
 
-export function MyAssessmentsScreen({ navigation }) {
+export function StudentsScreen({ navigation }) {
     const [pesquisa, setPesquisa] = useState('');
     const [serie, setSerie] = useState('');
     const [turma, setTurma] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(null);
 
-    const avaliacoes = [
-        { id: '1', nome: 'AV 1', nota: '7,0'},
-        { id: '2', nome: 'AV 2', nota: '7,0'},
-        { id: '3', nome: 'AVS', nota: '7,0'},
-        { id: '4', nome: 'PF', nota: '7,0'},
-        { id: '5', nome: 'RP', nota: '7,0'},
-        { id: '6', nome: 'RF', nota: '7,0'},
+    const alunos = [
+        { id: '1', nome: 'João Silva' },
+        { id: '2', nome: 'Maria Souza' },
+        { id: '3', nome: 'Carlos Pereira' },
+        { id: '4', nome: 'Ana Lima' },
+        { id: '5', nome: 'Pedro Santos' },
+        { id: '6', nome: 'Julia Oliveira' },
+        { id: '7', nome: 'Lucas Ferreira' },
+        { id: '8', nome: 'Mariana Costa' },
+        { id: '9', nome: 'Felipe Alves' },
+        { id: '10', nome: 'Larissa Mendes' }
     ];
 
-    const notasFiltradas = avaliacoes.filter(aluno =>
-        aluno.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
-        aluno.nota.toLowerCase().includes(pesquisa.toLowerCase())
-    );
 
-    function handleSelectedOption(item) {
-        setSelectedOption(item.id);
-    }
+    const alunosFiltrados = alunos.filter(aluno =>
+        aluno.nome.toLowerCase().includes(pesquisa.toLowerCase())
+    );
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Text style={styles.title}>Avaliações - Turma 1</Text>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setPesquisa}
-                            value={pesquisa}
-                            placeholder='Buscar Turma'
-                        />
-                        <Button title='Adicionar' onPress={() => setModalVisible(true)} />
-                    </View>
-                    <FlatList
-                        data={notasFiltradas}
-                        renderItem={({ item }) => <Item navigation={navigation} item={item} selected={selectedOption} onPress={() => {handleSelectedOption(item)}} />}
-                        keyExtractor={item => item.id}
-                        style={styles.list}
-                    />
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Alunos Turma 1</Text>
                 </View>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPesquisa}
+                        value={pesquisa}
+                        placeholder='Buscar Aluno'
+                    />
+                    <Button title='Adicionar' onPress={() => setModalVisible(true)} />
+                </View>
+                <FlatList
+                    data={alunosFiltrados}
+                    renderItem={({ item }) => <Item navigation={navigation} item={item} />}
+                    keyExtractor={item => item.id}
+                    style={styles.list}
+                />
+            </View>
             <Modal
                 animationType='fade'
                 transparent={true}
@@ -83,7 +68,7 @@ export function MyAssessmentsScreen({ navigation }) {
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Nova Turma</Text>
+                        <Text style={styles.modalTitle}>Adicionar Aluno</Text>
                         <TextInput
                             style={styles.modalInput}
                             onChangeText={setSerie}

@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ClassroomsService } from '../services/ClassroomsService';
 
 const Item = ({ navigation, item, selected, onPress }) => {
     return (
-        <TouchableOpacity style={styles.listContainer} onPress={onPress} back>
+        <TouchableOpacity style={styles.listContainer} onPress={onPress}>
             <View style={styles.listItem}>
-                <Text style={styles.listTitle}>{item.nome}</Text>
-                <Text style={styles.listTitle}>{item.nota}</Text>
+                <Text style={styles.listTitle}>{item.name}</Text>
+                <Text style={styles.listTitle}>{item.qtdAlunos}</Text>
             </View>
             {(selected === item.id) && (
                 <View style={styles.listOptions}>
                     <View style={styles.listButton}>
-                        <Button title='Editar' onPress={() => {}} />
+                        <Button title='Alunos' onPress={() => { navigation.navigate('Students') }} />
                     </View>
                     <View style={styles.listButton}>
-                        <Button title='Excluir' onPress={() => {}} />
+                        <Button title='Chamada' onPress={() => { navigation.navigate('Attendances') }} />
+                    </View>
+                    <View style={styles.listButton}>
+                        <Button title='Avaliações' onPress={() => { navigation.navigate('Assessments') }} />
                     </View>
                 </View>
             )}
@@ -23,52 +27,55 @@ const Item = ({ navigation, item, selected, onPress }) => {
     );
 }
 
-export function MyScoresScreen({ navigation }) {
-    const [pesquisa, setPesquisa] = useState('');
-    const [serie, setSerie] = useState('');
-    const [turma, setTurma] = useState('');
+export function ClassroomsScreen({ navigation }) {
+    const [search, setSearch] = useState('');
+    const [name, setName] = useState('');
+    const [classrooms, setClassrooms] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const alunos = [
-        { id: '1', nome: 'João Silva', nota: '9,5' },
-        { id: '2', nome: 'Maria Souza', nota: '7,9' },
-        { id: '3', nome: 'Carlos Pereira', nota: '6,8' },
-        { id: '4', nome: 'Ana Lima', nota: '5,4' },
-        { id: '5', nome: 'Pedro Santos', nota: '10,0' },
-        { id: '6', nome: 'Julia Oliveira', nota: '9,8' },
-        { id: '7', nome: 'Lucas Ferreira', nota: '2,5' },
-        { id: '8', nome: 'Mariana Costa', nota: '0,0' },
-        { id: '9', nome: 'Felipe Alves', nota: '7,3' },
-        { id: '10', nome: 'Larissa Mendes', nota: '10,0' }
-    ];
+    const classroomsService = ClassroomsService();
 
-    const alunosFiltrados = alunos.filter(aluno =>
-        aluno.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
-        aluno.nota.toLowerCase().includes(pesquisa.toLowerCase())
-    );
+    useEffect(() => {
+        loadClassrooms();
+    }, []);
+
+    const loadClassrooms = () => {
+        classroomsService.getClassrooms((data) => {
+            setClassrooms(data);
+        });
+    }
+
+    const filteredClassrooms = classrooms.filter(cr =>
+        cr.name.toLowerCase().includes(search.toLowerCase()));
 
     function handleSelectedItem(item) {
         setSelectedItem(item.id);
+    }
+
+    function addClassroom(name) {
+        classroomsService.addClassroom(name, (result) => {
+            loadClassrooms();
+        });
     }
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Notas AV1 - Turma 1</Text>
+                    <Text style={styles.title}>Minhas Turmas</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
-                        onChangeText={setPesquisa}
-                        value={pesquisa}
+                        onChangeText={setSearch}
+                        value={search}
                         placeholder='Buscar Turma'
                     />
                     <Button title='Adicionar' onPress={() => setModalVisible(true)} />
                 </View>
                 <FlatList
-                    data={alunosFiltrados}
+                    data={filteredClassrooms}
                     renderItem={({ item }) => <Item navigation={navigation} item={item} selected={selectedItem} onPress={() => { handleSelectedItem(item) }} />}
                     keyExtractor={item => item.id}
                     style={styles.list}
@@ -85,25 +92,17 @@ export function MyScoresScreen({ navigation }) {
                         <Text style={styles.modalTitle}>Nova Turma</Text>
                         <TextInput
                             style={styles.modalInput}
-                            onChangeText={setSerie}
-                            value={serie}
-                            placeholder='Série'
-                        />
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setTurma}
-                            value={turma}
+                            onChangeText={setName}
+                            value={name}
                             placeholder='Turma'
                         />
                         <View style={styles.modalButtonContainer}>
                             <TouchableOpacity
                                 style={[styles.button, styles.saveButton]}
                                 onPress={() => {
-                                    addNewClass({ serie: serie, turma: turma });
+                                    addClassroom(name);
                                     setModalVisible(false);
-                                    clear();
-                                }
-                                }
+                                }}
                             >
                                 <Text style={styles.buttonText}>Salvar</Text>
                             </TouchableOpacity>

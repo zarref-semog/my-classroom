@@ -29,7 +29,7 @@ const Item = ({ navigation, item}) => {
     );
 }
 
-export const MyScheduleScreen = () => {
+export const SchedulesScreen = () => {
   const tableHead = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   const tableData = [
     ['8:00 - 9:00', 'Math', 'English', 'Biology', 'History', 'Geography'],
