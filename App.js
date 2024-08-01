@@ -11,6 +11,7 @@ import { AttendancesScreen } from './src/screens/AttendancesScreen';
 import { AssessmentsScreen } from './src/screens/AssessmentsScreen';
 import { ScoresScreen } from './src/screens/ScoresScreen';
 import { SQLiteProvider } from 'expo-sqlite';
+import { MenuProvider } from 'react-native-popup-menu';
 import initializeDatabase from './src/database/database-init';
 
 const Tab = createBottomTabNavigator();
@@ -42,7 +43,9 @@ function App() {
   return (
     <NavigationContainer>
       <SQLiteProvider databaseName="MyClassroom.db" onInit={initializeDatabase}>
-        <MyClassroomStack />
+        <MenuProvider>
+          <MyClassroomStack />
+        </MenuProvider>
       </SQLiteProvider>
     </NavigationContainer>
   );
