@@ -1,76 +1,112 @@
 import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import { ActivitiesService } from '../services/ActivitiesService';
 
-const Item = ({ navigation, item }) => {
-    const [showOptions, setShowOptions] = useState(false);
-
-    return (
-        <TouchableOpacity style={styles.listContainer} onPress={() => setShowOptions(!showOptions)}>
-            <View style={styles.listItem}>
-                <Text style={styles.listTitle}>{`${item.serie} - ${item.turma}`}</Text>
-                <Text style={styles.listTitle}>{item.qtdAlunos}</Text>
-            </View>
-            {showOptions && (
-                <View style={styles.listOptions}>
-                    <View style={styles.listButton}>
-                        <Button title='Alunos' onPress={() => { navigation.navigate('Students') }} />
-                    </View>
-                    <View style={styles.listButton}>
-                        <Button title='Chamadas' onPress={() => { navigation.navigate('Attendances') }} />
-                    </View>
-                    <View style={styles.listButton}>
-                        <Button title='Avaliações' onPress={() => { navigation.navigate('Assessments') }} />
-                    </View>
+const Item = ({ navigation, item, classroomId, classroomName, selected, onPress, setModalContent }) => (
+    <Pressable style={styles.listContainer} onPress={onPress}>
+        <View style={styles.listItem}>
+            <Text style={styles.listTitle}>{item.name}</Text>
+            {selected === item.id && (
+                <View style={styles.listAction}>
+                    <Pressable style={styles.listButton} onPress={() => setModalContent('updateActivity', item)}>
+                        <Icon name='pencil' type='font-awesome' color='blue' />
+                    </Pressable>
+                    <Pressable style={styles.listButton} onPress={() => setModalContent('viewActivity', item)}>
+                        <Icon name='eye' type='font-awesome' color='white' />
+                    </Pressable>
+                    <Pressable style={styles.listButton} onPress={() => setModalContent('deleteActivity', item)}>
+                        <Icon name='trash' type='font-awesome' color='red' />
+                    </Pressable>
                 </View>
             )}
-        </TouchableOpacity>
-    );
-}
+        </View>
+    </Pressable>
+);
 
 export function ActivitiesScreen({ navigation }) {
-    const [pesquisa, setPesquisa] = useState('');
-    const [turma, setTurma] = useState('');
-    const [titulo, setTitulo] = useState('');
-    const [descricao, setDescricao] = useState('');
+    const [search, setSearch] = useState('');
+    const [id, setId] = useState('');
+    const [classroomId, setClassroomId] = useState('');
+    const [description, setDescription] = useState([]);
+    const [status, setStatus] = useState([]);
+    const [activities, setActivities] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [modalContent, setModalContent] = useState('');
 
-    const atividades = [
-        { id: '1', serie: '8º ano', turma: 'A', qtdAlunos: 22 },
-        { id: '2', serie: '7º ano', turma: 'B', qtdAlunos: 32 },
-        { id: '3', serie: '6º ano', turma: 'C', qtdAlunos: 25 },
-        { id: '4', serie: '9º ano', turma: 'D', qtdAlunos: 18 },
-        { id: '5', serie: '5º ano', turma: 'E', qtdAlunos: 31 },
-        { id: '6', serie: '8º ano', turma: 'F', qtdAlunos: 23 },
-        { id: '7', serie: '7º ano', turma: 'G', qtdAlunos: 19 },
-        { id: '8', serie: '6º ano', turma: 'H', qtdAlunos: 27 },
-        { id: '9', serie: '9º ano', turma: 'I', qtdAlunos: 30 },
-        { id: '10', serie: '5º ano', turma: 'J', qtdAlunos: 31 },
-    ];
+    const activitiesService = ActivitiesService();
 
-    const turmasFiltradas = atividades.filter(turma =>
-        turma.serie.toLowerCase().includes(pesquisa.toLowerCase()) ||
-        turma.turma.toLowerCase().includes(pesquisa.toLowerCase())
-    );
+    useEffect(() => {
+        loadActivities();
+    }, []);
+
+    const loadActivities = () => {
+        activitiesService.getActivities((data) => {
+            setActivities(data);
+        });
+    };
+
+
+    function addActivity(name) {
+        activitiesService.addActivity(name, () => {
+            loadActivities();
+        });
+    }
+
+    function updateActivity(id, name) {
+        activitiesService.updateActivity(id, name, () => {
+            loadActivities();
+        });
+    }
+
+    function deleteActivity(id) {
+        activitiesService.deleteActivity(id, () => {
+            loadActivities();
+        });
+    }
+
+    function handleSelectedItem(item) {
+        item.id !== selectedItem ? setSelectedItem(item.id) : setSelectedItem(null);
+    }
+
+    function handleModalContent(content, item = {}) {
+        if (content === 'addActivity') {
+            setName('');
+        } else {
+            setId(item.id);
+            setName(item.name);
+        }
+        setModalContent(content);
+        setModalVisible(true);
+    }
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Minhas Atividades</Text>
+                    <Text style={styles.title}>Minhas Turmas</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
-                        onChangeText={setPesquisa}
-                        value={pesquisa}
+                        onChangeText={setSearch}
+                        value={search}
                         placeholder='Buscar Turma'
                     />
-                    <Button title='Adicionar' onPress={() => setModalVisible(true)} />
+                    <Button title='Adicionar' onPress={() => handleModalContent('addActivity')} />
                 </View>
                 <FlatList
-                    data={turmasFiltradas}
-                    renderItem={({ item }) => <Item navigation={navigation} item={item} />}
+                    data={activities}
+                    renderItem={({ item }) => (
+                        <Item
+                            navigation={navigation}
+                            item={item}
+                            selected={selectedItem}
+                            onPress={() => handleSelectedItem(item)}
+                            setModalContent={(content, item) => handleModalContent(content, item)}
+                        />
+                    )}
                     keyExtractor={item => item.id}
                     style={styles.list}
                 />
@@ -81,43 +117,121 @@ export function ActivitiesScreen({ navigation }) {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Nova Atividade</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setTurma}
-                            value={turma}
-                            placeholder='Turma'
-                        />
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setTitulo}
-                            value={titulo}
-                            placeholder='Título'
-                        />
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setDescricao}
-                            value={descricao}
-                            placeholder='Descrição'
-                        />
-                        <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.saveButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.buttonText}>Salvar</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, styles.cancelButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.buttonText}>Cancelar</Text>
-                            </TouchableOpacity>
+                {modalContent === 'addActivity' && (
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Nova Turma</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                onChangeText={setName}
+                                value={name}
+                                placeholder='Turma'
+                            />
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.saveButton]}
+                                    onPress={() => {
+                                        addActivity(name);
+                                        setModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>Salvar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.cancelButton]}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
+                )}
+                {modalContent === 'updateActivity' && (
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Editar Atividade</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                onChangeText={setName}
+                                value={name}
+                                placeholder='Turma'
+                            />
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.saveButton]}
+                                    onPress={() => {
+                                        updateActivity(id, name);
+                                        setModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>Salvar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.cancelButton]}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                )}
+                {modalContent === 'viewActivity' && (
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Visualizar Atividade</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                onChangeText={setName}
+                                value={name}
+                                placeholder='Turma'
+                            />
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.saveButton]}
+                                    onPress={() => {
+                                        updateActivity(id, name);
+                                        setModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>Salvar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.cancelButton]}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                )}
+                {modalContent === 'deleteActivity' && (
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Excluir Atividade</Text>
+                            <Text>Deseja realmente excluir esta atividade?</Text>
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.saveButton]}
+                                    onPress={() => {
+                                        deleteActivity(id);
+                                        setModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>Excluir</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.cancelButton]}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                )}
             </Modal>
         </GestureHandlerRootView>
     );
@@ -216,18 +330,33 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         height: 80,
     },
-    listOptions: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 5,
-        marginTop: 10,
-        marginBottom: 10
-    },
-    listButton: {
-        marginRight: 5,
-    },
     listTitle: {
         color: 'white',
         fontWeight: 'bold',
+    },
+    listAction: {
+        flexDirection: 'row',
+        marginHorizontal: 10,
+        justifyContent: 'space-between',
+        gap: 10
+    },
+    listButton: {
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100
+    },
+    optionsContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100,
+        width: 30,
+        height: 30
+    },
+    menuOption: {
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#b3b3b3'
     },
 });
