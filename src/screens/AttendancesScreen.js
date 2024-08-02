@@ -1,109 +1,136 @@
-import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, TextInput, StyleSheet, FlatList, Pressable, Modal, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { RadioButton } from '../components/RadioButton';
+import { AttendancesService } from '../services/AttendancesService';
+import { Icon } from 'react-native-elements';
 
-const Item = ({ item }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
+const Item = ({ item, classroomName, navigation, selected, onPress, setModalContent }) => {
+    return (
+        <Pressable style={styles.listContainer} onPress={onPress}>
+            <View style={[styles.listItem, styles.listContainer]}>
+                <Text style={styles.listTitle}>{item.date}</Text>
+                {
+                    selected === item.id && (
+                        <View style={{ flexDirection: 'row', gap: 20 }}>
+                            <Pressable onPress={() => navigation.navigate('AttendancesStudents', { attendanceId: item.id, classroomName: classroomName })}>
+                                <Icon name='eye' type='font-awesome' color='white' />
+                            </Pressable>
+                            <Pressable onPress={() => { setModalContent('deleteAttendance', item) }}>
+                                <Icon name='trash' type='font-awesome' color='red' />
+                            </Pressable>
+                        </View>
+                    )
+                }
+            </View>
+        </Pressable>
+    );
+};
 
-    const handleOptionChange = (option) => {
-        setSelectedOption(option);
+export function AttendancesScreen({ route, navigation }) {
+    const [search, setSearch] = useState('');
+    const [id, setId] = useState('');
+    const [attendances, setAttendances] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [modalContent, setModalContent] = useState('');
+
+    const { classroomId, classroomName } = route.params;
+
+    const attendancesService = AttendancesService();
+
+    const filteredAttendances = attendances.filter(att =>
+        att.date.toLowerCase().includes(search.toLowerCase())
+    );
+
+    useEffect(() => {
+        loadAttendances();
+    });
+
+    const loadAttendances = () => {
+        attendancesService.getAttendances(classroomId, (data) => {
+            setAttendances(data);
+        });
     };
 
-    return (
-        <View style={[styles.listItem, styles.listContainer]}>
-            <Text style={styles.listTitle}>{item.nome}</Text>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-                <RadioButton selected={selectedOption === 'option1'} onPress={() => { handleOptionChange('option1') }} color='blue' />
-                <RadioButton selected={selectedOption === 'option2'} onPress={() => { handleOptionChange('option2') }} color='red' />
-            </View>
-        </View>
-    );
-}
+    function deleteAttendance(id) {
+        attendancesService.deleteAttendance(id, () => {
+            loadAttendances();
+        });
+    }
 
-export function AttendancesScreen({ navigation }) {
-    const [pesquisa, setPesquisa] = useState('');
-    const [serie, setSerie] = useState('');
-    const [turma, setTurma] = useState('');
-    const [modalVisible, setModalVisible] = useState(false);
+    function handleSelectedItem(item) {
+        item.id !== selectedItem ? setSelectedItem(item.id) : setSelectedItem(null);
+    }
 
-    const chamadas = [
-        { id: '1', nome: 'João Silva' },
-        { id: '2', nome: 'Maria Souza' },
-        { id: '3', nome: 'Carlos Pereira' },
-        { id: '4', nome: 'Ana Lima' },
-        { id: '5', nome: 'Pedro Santos' },
-        { id: '6', nome: 'Julia Oliveira' },
-        { id: '7', nome: 'Lucas Ferreira' },
-        { id: '8', nome: 'Mariana Costa' },
-        { id: '9', nome: 'Felipe Alves' },
-        { id: '10', nome: 'Larissa Mendes' }
-    ];
-
-    const chamadasFiltradas = chamadas.filter(chamada =>
-        chamada.nome.toLowerCase().includes(pesquisa.toLowerCase())
-    );
+    function handleModalContent(content, item = {}) {
+        setId(item.id);
+        setModalContent(content);
+        setModalVisible(true);
+    }
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Chamada Turma 1</Text>
+                    <Text style={styles.title}>Chamadas - {classroomName}</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
-                        onChangeText={setPesquisa}
-                        value={pesquisa}
-                        placeholder='Buscar Aluno'
+                        onChangeText={setSearch}
+                        value={search}
+                        placeholder='Buscar Chamada'
                     />
-                    <Button title='Adicionar' onPress={() => setModalVisible(true)} />
+                    <Button title='Adicionar' onPress={() => navigation.navigate('NewAttendancesStudents', { classroomId, classroomName })} />
                 </View>
                 <FlatList
-                    data={chamadasFiltradas}
-                    renderItem={({ item }) => <Item navigation={navigation} item={item} />}
-                    keyExtractor={item => item.id}
+                    data={filteredAttendances}
+                    renderItem={({ item }) => (
+                        <Item
+                            navigation={navigation}
+                            item={item}
+                            classroomName={classroomName}
+                            selected={selectedItem}
+                            onPress={() => handleSelectedItem(item)}
+                            setModalContent={(content, item) => handleModalContent(content, item)}
+                        />
+                    )}
+                    keyExtractor={item => item.id.toString()}
                     style={styles.list}
                 />
-            </View>
-            <Modal
-                animationType='fade'
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Nova Turma</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setSerie}
-                            value={serie}
-                            placeholder='Série'
-                        />
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setTurma}
-                            value={turma}
-                            placeholder='Turma'
-                        />
-                        <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.saveButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.buttonText}>Salvar</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, styles.cancelButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.buttonText}>Cancelar</Text>
-                            </TouchableOpacity>
+                <Modal
+                    animationType='fade'
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    {modalContent === 'deleteAttendance' && (
+                        <View style={styles.modalOverlay}>
+                            <View style={styles.modalContainer}>
+                                <Text style={styles.modalTitle}>Excluir Turma</Text>
+                                <Text>Deseja realmente excluir esta turma?</Text>
+                                <View style={styles.modalButtonContainer}>
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.saveButton]}
+                                        onPress={() => {
+                                            deleteAttendance(id);
+                                            setModalVisible(false);
+                                        }}
+                                    >
+                                        <Text style={styles.buttonText}>Excluir</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.cancelButton]}
+                                        onPress={() => setModalVisible(false)}
+                                    >
+                                        <Text style={styles.buttonText}>Cancelar</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
-                    </View>
-                </View>
-            </Modal>
+                    )}
+                </Modal>
+            </View>
         </GestureHandlerRootView>
     );
 }

@@ -16,9 +16,9 @@ export function StudentsService() {
         }
     };
 
-    const getStudents = async (callback) => {
+    const getStudents = async (classroom_id, callback) => {
         try {
-            const result = await db.getAllAsync('SELECT * FROM Students;');
+            const result = await db.getAllAsync(`SELECT * FROM Students WHERE classroom_id = ${classroom_id};`);
             callback(result);
         } catch (e) {
             console.error('Error: ', e);

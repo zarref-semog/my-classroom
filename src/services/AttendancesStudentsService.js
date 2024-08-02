@@ -16,9 +16,27 @@ export function AttendancesStudentsService() {
         }
     };
 
-    const getAttendancesStudents = async (callback) => {
+    const addManyAttendanceStudent = async (attendances, attendance_id) => {
+        if (!Array.isArray(attendances) || attendances.some(att => !att.student_id || !att.status)) {
+            console.error('Invalid attendances array');
+            return;
+        }
+    
+        let sql = '';
+        attendances.forEach(att => {
+            sql += `INSERT INTO Attendances_Students (attendance_id, student_id, status) VALUES (${attendance_id}, ${att.student_id}, '${att.status}');`
+        });
+    
         try {
-            const result = await db.getAllAsync('SELECT * FROM Attendances_Students;');
+            await db.execAsync(sql);
+        } catch (e) {
+            console.error('Error: ', e);
+        }
+    };
+    
+    const getAttendancesStudents = async (attendance_id, callback) => {
+        try {
+            const result = await db.getAllAsync(`SELECT * FROM Attendances_Students WHERE attendance_id = ${attendance_id};`);
             callback(result);
         } catch (e) {
             console.error('Error: ', e);
@@ -49,6 +67,6 @@ export function AttendancesStudentsService() {
         }
     };
 
-    return { addAttendanceStudent, getAttendancesStudents, updateAttendanceStudent, deleteAttendanceStudent };
+    return { addAttendanceStudent, addManyAttendanceStudent, getAttendancesStudents, updateAttendanceStudent, deleteAttendanceStudent };
 
 }

@@ -12,7 +12,7 @@ const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
             {selected === item.id && (
                 <View style={styles.listAction}>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('updateClassroom', item)}>
-                        <Icon name='pencil' type='font-awesome' color='white' />
+                        <Icon name='pencil' type='font-awesome' color='blue' />
                     </Pressable>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('deleteClassroom', item)}>
                         <Icon name='trash' type='font-awesome' color='red' />
@@ -22,8 +22,8 @@ const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
                             <Icon name='ellipsis-v' type='font-awesome' color='white' />
                         </MenuTrigger>
                         <MenuOptions>
-                            <MenuOption style={styles.menuOption} onSelect={() => navigation.navigate('Students')} text='Alunos' />
-                            <MenuOption style={styles.menuOption} onSelect={() => navigation.navigate('Attendances')} text='Chamada' />
+                            <MenuOption style={styles.menuOption} onSelect={() => navigation.navigate('Students', { classroomId: item.id, classroomName: item.name })} text='Alunos' />
+                            <MenuOption style={styles.menuOption} onSelect={() => navigation.navigate('Attendances', { classroomId: item.id, classroomName: item.name })} text='Chamada' />
                             <MenuOption style={{ paddingVertical: 10 }} onSelect={() => navigation.navigate('Assessments')} text='Avaliações' />
                         </MenuOptions>
                     </Menu>
@@ -58,26 +58,27 @@ export function ClassroomsScreen({ navigation }) {
         cr.name.toLowerCase().includes(search.toLowerCase())
     );
 
-    function handleSelectedItem(item) {
-        item.id !== selectedItem ? setSelectedItem(item.id) : setSelectedItem(null);
-    }
-
+    
     function addClassroom(name) {
         classroomsService.addClassroom(name, () => {
             loadClassrooms();
         });
     }
-
+    
     function updateClassroom(id, name) {
         classroomsService.updateClassroom(id, name, () => {
             loadClassrooms();
         });
     }
-
+    
     function deleteClassroom(id) {
         classroomsService.deleteClassroom(id, () => {
             loadClassrooms();
         });
+    }
+    
+    function handleSelectedItem(item) {
+        item.id !== selectedItem ? setSelectedItem(item.id) : setSelectedItem(null);
     }
 
     function handleModalContent(content, item = {}) {
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     },
     listAction: {
         flexDirection: 'row',
-        marginRight: 10,
+        marginHorizontal: 10,
         justifyContent: 'space-between',
         gap: 10
     },
@@ -340,5 +341,3 @@ const styles = StyleSheet.create({
         borderBottomColor: '#b3b3b3'
     },
 });
-
-export default ClassroomsScreen;

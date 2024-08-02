@@ -16,9 +16,9 @@ export function AttendancesService() {
         }
     };
 
-    const getAttendances = async (callback) => {
+    const getAttendances = async (classroom_id, callback) => {
         try {
-            const result = await db.getAllAsync('SELECT * FROM Attendances;');
+            const result = await db.getAllAsync(`SELECT * FROM Attendances WHERE classroom_id = ${classroom_id};`);
             callback(result);
         } catch (e) {
             console.error('Error: ', e);
