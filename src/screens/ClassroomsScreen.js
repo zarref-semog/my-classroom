@@ -24,7 +24,7 @@ const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
                         <MenuOptions>
                             <MenuOption style={styles.menuOption} onSelect={() => navigation.navigate('Students', { classroomId: item.id, classroomName: item.name })} text='Alunos' />
                             <MenuOption style={styles.menuOption} onSelect={() => navigation.navigate('Attendances', { classroomId: item.id, classroomName: item.name })} text='Chamada' />
-                            <MenuOption style={{ paddingVertical: 10 }} onSelect={() => navigation.navigate('Assessments')} text='Avaliações' />
+                            <MenuOption style={{ paddingVertical: 10 }} onSelect={() => navigation.navigate('Assessments', { classroomId: item.id, classroomName: item.name})} text='Avaliações' />
                         </MenuOptions>
                     </Menu>
                 </View>

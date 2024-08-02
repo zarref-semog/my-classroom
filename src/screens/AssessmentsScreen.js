@@ -1,117 +1,251 @@
-import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
-import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AssessmentsService } from '../services/AssessmentsService';
+import { ScoresService } from '../services/ScoresService';
+import { StudentsService } from '../services/StudentsService';
 
-const Item = ({ navigation, item, selected, onPress}) => {
-    const [showOptions, setShowOptions] = useState(false);
-
-    return (
-        <TouchableOpacity style={styles.listContainer} selected={selected} onPress={onPress}>
-                <View style={styles.listItem}>
-                    <Text style={styles.listTitle}>{item.nome}</Text>
-                    <Text style={styles.listTitle}>{item.nota}</Text>
+const Item = ({ navigation, item, classroomId, classroomName, selected, onPress, setModalContent }) => (
+    <Pressable style={styles.listContainer} onPress={onPress}>
+        <View style={styles.listItem}>
+            <Text style={styles.listTitle}>{item.name}</Text>
+            {selected === item.id ? (
+                <View style={styles.listAction}>
+                    <Pressable style={styles.listButton} onPress={() => {
+                        navigation.navigate('Scores', {
+                            classroomId: classroomId,
+                            classroomName: classroomName,
+                            assessmentId: item.id,
+                            assessmentName: item.name
+                        });
+                    }}>
+                        <Icon name='address-book' type='font-awesome' color='#e8e8e8' />
+                    </Pressable>
+                    <Pressable style={styles.listButton} onPress={() => setModalContent('updateAssessment', item)}>
+                        <Icon name='pencil' type='font-awesome' color='blue' />
+                    </Pressable>
+                    <Pressable style={styles.listButton} onPress={() => setModalContent('deleteAssessment', item)}>
+                        <Icon name='trash' type='font-awesome' color='red' />
+                    </Pressable>
                 </View>
-                {(selected === item.id) && (
-                    <View style={styles.listOptions}>
-                        <View style={styles.listButton}>
-                            <Button title='Notas' onPress={() => { navigation.navigate('Scores')}} />
-                        </View>
-                        <View style={styles.listButton}>
-                            <Button title='Editar' onPress={() => {}} />
-                        </View>
-                        <View style={styles.listButton}>
-                            <Button title='Excluir' onPress={() => {}} />
-                        </View>
-                    </View>
-                )}
-        </TouchableOpacity>
-    );
-}
+            ) : (
+                <View style={styles.listAction}>
+                    <Text>{item.passing_score}</Text>
+                </View>
+            )}
+        </View>
+    </Pressable>
+);
 
-export function AssessmentsScreen({ navigation }) {
-    const [pesquisa, setPesquisa] = useState('');
-    const [serie, setSerie] = useState('');
-    const [turma, setTurma] = useState('');
+export function AssessmentsScreen({ route, navigation }) {
+    const [search, setSearch] = useState('');
+    const [id, setId] = useState('');
+    const [name, setName] = useState('');
+    const [passingScore, setPassingScore] = useState('');
+    const [assessments, setAssessments] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [modalContent, setModalContent] = useState([]);
+    const [students, setStudents] = useState([]);
 
-    const avaliacoes = [
-        { id: '1', nome: 'AV 1', nota: '7,0'},
-        { id: '2', nome: 'AV 2', nota: '7,0'},
-        { id: '3', nome: 'AVS', nota: '7,0'},
-        { id: '4', nome: 'PF', nota: '7,0'},
-        { id: '5', nome: 'RP', nota: '7,0'},
-        { id: '6', nome: 'RF', nota: '7,0'},
-    ];
+    const { classroomId, classroomName } = route.params;
 
-    const notasFiltradas = avaliacoes.filter(aluno =>
-        aluno.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
-        aluno.nota.toLowerCase().includes(pesquisa.toLowerCase())
+    const assessmentsService = AssessmentsService();
+    const scoresService = ScoresService();
+    const studentsService = StudentsService();
+
+    const filteredAssessments = assessments.filter(ass =>
+        ass.name.toLowerCase().includes(search.toLowerCase()) ||
+        String(ass.passing_score).toLowerCase().includes(search.toLowerCase())
     );
 
-    function handleSelectedOption(item) {
-        setSelectedOption(item.id);
+    useEffect(() => {
+        loadStudents();
+        loadAssessments();
+    }, []);
+
+    function loadStudents() {
+        studentsService.getStudents(classroomId, (data) => setStudents(data));
+    }
+
+    function loadAssessments() {
+        assessmentsService.getAssessments((data) => setAssessments(data));
+    }
+
+    function addAssessment(name, passingScore) {
+        assessmentsService.addAssessment(classroomId, name, passingScore, (data) => {
+            scoresService.addManyScores(students, data.lastInsertRowId);
+            loadAssessments();
+        });
+    }
+
+    function updateAssessment(id, name, passingScore) {
+        assessmentsService.updateAssessment(id, classroomId, name, passingScore, () => {
+            loadAssessments();
+        });
+    }
+
+    function deleteAssessment(id) {
+        assessmentsService.deleteAssessment(id, () => {
+            loadAssessments();
+        });
+    }
+
+    function handleSelectedItem(item) {
+        item.id !== selectedItem ? setSelectedItem(item.id) : setSelectedItem(null);
+    }
+
+    function handleModalContent(content, item = {}) {
+        if (content === 'addAssessment') {
+            setName('');
+            setPassingScore('');
+        } else {
+            setId(item.id);
+            setName(item.name);
+            setPassingScore(String(item.passing_score));
+        }
+        setModalContent(content);
+        setModalVisible(true);
     }
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Text style={styles.title}>Avaliações - Turma 1</Text>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setPesquisa}
-                            value={pesquisa}
-                            placeholder='Buscar Turma'
-                        />
-                        <Button title='Adicionar' onPress={() => setModalVisible(true)} />
-                    </View>
-                    <FlatList
-                        data={notasFiltradas}
-                        renderItem={({ item }) => <Item navigation={navigation} item={item} selected={selectedOption} onPress={() => {handleSelectedOption(item)}} />}
-                        keyExtractor={item => item.id}
-                        style={styles.list}
-                    />
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Avaliações - {classroomName}</Text>
                 </View>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setSearch}
+                        value={search}
+                        placeholder='Buscar Avaliação'
+                    />
+                    <Button title='Adicionar' onPress={() => handleModalContent('addAssessment')} />
+                </View>
+                <FlatList
+                    data={filteredAssessments}
+                    renderItem={({ item }) => (
+                        <Item
+                            navigation={navigation}
+                            item={item}
+                            classroomId={classroomId}
+                            classroomName={classroomName}
+                            selected={selectedItem}
+                            onPress={() => handleSelectedItem(item)}
+                            setModalContent={(content, item) => handleModalContent(content, item)}
+                        />
+                    )}
+                    keyExtractor={item => item.id.toString()}
+                    style={styles.list}
+                />
+            </View>
             <Modal
                 animationType='fade'
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Nova Turma</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setSerie}
-                            value={serie}
-                            placeholder='Série'
-                        />
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setTurma}
-                            value={turma}
-                            placeholder='Turma'
-                        />
-                        <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.saveButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.buttonText}>Salvar</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, styles.cancelButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.buttonText}>Cancelar</Text>
-                            </TouchableOpacity>
+                {modalContent === 'addAssessment' && (
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Nova Avaliação</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                onChangeText={setName}
+                                value={name}
+                                placeholder='Nome'
+                            />
+                            <TextInput
+                                keyboardType='numeric'
+                                style={styles.modalInput}
+                                onChangeText={(value) => setPassingScore(value)}
+                                value={passingScore}
+                                placeholder='Nota de corte'
+                            />
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.saveButton]}
+                                    onPress={() => {
+                                        addAssessment(name, parseFloat(passingScore));
+                                        setModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>Salvar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.cancelButton]}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
+                )}
+                {modalContent === 'updateAssessment' && (
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Editar Avaliação</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                onChangeText={setName}
+                                value={name}
+                                placeholder='Nome'
+                            />
+                            <TextInput
+                                keyboardType='numeric'
+                                style={styles.modalInput}
+                                onChangeText={(value) => setPassingScore(value)}
+                                value={passingScore}
+                                placeholder='Nota de corte'
+                            />
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.saveButton]}
+                                    onPress={() => {
+                                        updateAssessment(id, name, parseFloat(passingScore));
+                                        setModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>Salvar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.cancelButton]}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                )}
+                {modalContent === 'deleteAssessment' && (
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Excluir Avaliação</Text>
+                            <Text>Deseja realmente excluir esta avaliação?</Text>
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.saveButton]}
+                                    onPress={() => {
+                                        deleteAssessment(id);
+                                        setModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>Excluir</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.cancelButton]}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                )}
             </Modal>
         </GestureHandlerRootView>
     );
@@ -210,18 +344,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         height: 80,
     },
-    listOptions: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 5,
-        marginTop: 10,
-        marginBottom: 10
-    },
-    listButton: {
-        marginRight: 5,
-    },
     listTitle: {
         color: 'white',
         fontWeight: 'bold',
+    },
+    listAction: {
+        flexDirection: 'row',
+        marginHorizontal: 10,
+        justifyContent: 'space-between',
+        gap: 10
+    },
+    listButton: {
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100
     },
 });

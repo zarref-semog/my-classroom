@@ -14,9 +14,30 @@ export function ScoresService() {
         }
     };
 
-    const getScores = async (callback) => {
+    const addManyScores = async (students, assessment_id) => {
+        if (!Array.isArray(students) || students.some(student => !student.classroom_id || !student.id || !student.name)) {
+            console.error('Invalid students array');
+            return;
+        }
+        console.log('Alunos: ', students);
+    
+        let sql = '';
+        students.forEach(student => {
+            sql += `INSERT INTO Scores (assessment_id, student_id, score) VALUES (${assessment_id}, ${student.id}, 0.0);`
+        });
+        console.log('Comando: ', sql);
         try {
-            const result = await db.getAllAsync('SELECT * FROM Scores;');
+            await db.execAsync(sql);
+        } catch (e) {
+            console.error('Error: ', e);
+        }
+    };
+
+    const getScores = async (assessment_id, callback) => {
+        try {
+            const result = await db.getAllAsync(`SELECT * FROM Scores WHERE assessment_id = ${assessment_id};`);
+            console.log('Dados: ', result);
+            console.log('Av atual: ', assessment_id)
             callback(result);
         } catch (e) {
             console.error('Error: ', e);
@@ -43,5 +64,5 @@ export function ScoresService() {
         }
     };
 
-    return { addScore, getScores, updateScore, deleteScore };
+    return { addScore, addManyScores, getScores, updateScore, deleteScore };
 }

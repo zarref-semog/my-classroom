@@ -1,76 +1,96 @@
-import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ScoresService } from '../services/ScoresService';
+import { Icon } from 'react-native-elements';
 
-const Item = ({ navigation, item, selected, onPress }) => {
+const Item = ({ item, selected, onPress, setModalContent }) => {
     return (
-        <TouchableOpacity style={styles.listContainer} onPress={onPress} back>
-            <View style={styles.listItem}>
-                <Text style={styles.listTitle}>{item.nome}</Text>
-                <Text style={styles.listTitle}>{item.nota}</Text>
+        <Pressable onPress={onPress}>
+            <View style={[styles.listItem, styles.listContainer]}>
+                <Text style={styles.listTitle}>{item.student_id}</Text>
+                {selected === item.id ? (
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <Pressable onPress={() => setModalContent('updateScore', item)}>
+                            <Icon name='pencil' type='font-awesome' />
+                        </Pressable>
+                    </View>
+                ) : (
+                    <Text>{item.score}</Text>
+                )}
             </View>
-            {(selected === item.id) && (
-                <View style={styles.listOptions}>
-                    <View style={styles.listButton}>
-                        <Button title='Editar' onPress={() => {}} />
-                    </View>
-                    <View style={styles.listButton}>
-                        <Button title='Excluir' onPress={() => {}} />
-                    </View>
-                </View>
-            )}
-        </TouchableOpacity>
+        </Pressable>
     );
-}
+};
 
-export function ScoresScreen({ navigation }) {
-    const [pesquisa, setPesquisa] = useState('');
-    const [serie, setSerie] = useState('');
-    const [turma, setTurma] = useState('');
+export function ScoresScreen({ route }) {
+    const [search, setSearch] = useState('');
+    const [id, setId] = useState('');
+    const [name, setName] = useState('');
+    const [score, setScore] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [modalContent, setModalContent] = useState('');
+    const [scores, setScores] = useState([]);
 
-    const alunos = [
-        { id: '1', nome: 'João Silva', nota: '9,5' },
-        { id: '2', nome: 'Maria Souza', nota: '7,9' },
-        { id: '3', nome: 'Carlos Pereira', nota: '6,8' },
-        { id: '4', nome: 'Ana Lima', nota: '5,4' },
-        { id: '5', nome: 'Pedro Santos', nota: '10,0' },
-        { id: '6', nome: 'Julia Oliveira', nota: '9,8' },
-        { id: '7', nome: 'Lucas Ferreira', nota: '2,5' },
-        { id: '8', nome: 'Mariana Costa', nota: '0,0' },
-        { id: '9', nome: 'Felipe Alves', nota: '7,3' },
-        { id: '10', nome: 'Larissa Mendes', nota: '10,0' }
-    ];
+    const { classroomId, classroomName, assessmentId, assessmentName } = route.params;
 
-    const alunosFiltrados = alunos.filter(aluno =>
-        aluno.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
-        aluno.nota.toLowerCase().includes(pesquisa.toLowerCase())
-    );
+    const scoresService = ScoresService();
+
+    useEffect(() => {
+        loadScores();
+    }, []);
+
+    function loadScores() {
+        scoresService.getScores(assessmentId, (data) => {
+            setScores(data);
+        });
+    }
 
     function handleSelectedItem(item) {
-        setSelectedItem(item.id);
+        setSelectedItem(item.id !== selectedItem ? item.id : null);
     }
+
+    function handleModalContent(content, item = {}) {
+        setId(item.id);
+        setName(item.student_id);
+        setScore(item.score);
+        setModalContent(content);
+        setModalVisible(true);
+    }
+
+    const updateScore = (studentId, newScore) => {
+        scoresService.updateScore(id, assessmentId, studentId, newScore, () => {
+            loadScores();
+            setModalVisible(false);
+        });
+    };
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Notas AV1 - Turma 1</Text>
+                    <Text style={styles.title}>Notas {assessmentName} - {classroomName}</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
-                        onChangeText={setPesquisa}
-                        value={pesquisa}
-                        placeholder='Buscar Turma'
+                        onChangeText={setSearch}
+                        value={search}
+                        placeholder='Buscar Aluno'
                     />
-                    <Button title='Adicionar' onPress={() => setModalVisible(true)} />
                 </View>
                 <FlatList
-                    data={alunosFiltrados}
-                    renderItem={({ item }) => <Item navigation={navigation} item={item} selected={selectedItem} onPress={() => { handleSelectedItem(item) }} />}
-                    keyExtractor={item => item.id}
+                    data={scores}
+                    renderItem={({ item }) => (
+                        <Item
+                            item={item}
+                            selected={selectedItem}
+                            onPress={() => handleSelectedItem(item)}
+                            setModalContent={handleModalContent}
+                        />
+                    )}
+                    keyExtractor={item => item.id.toString()}
                     style={styles.list}
                 />
             </View>
@@ -80,42 +100,35 @@ export function ScoresScreen({ navigation }) {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Nova Turma</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setSerie}
-                            value={serie}
-                            placeholder='Série'
-                        />
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setTurma}
-                            value={turma}
-                            placeholder='Turma'
-                        />
-                        <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.saveButton]}
-                                onPress={() => {
-                                    addNewClass({ serie: serie, turma: turma });
-                                    setModalVisible(false);
-                                    clear();
-                                }
-                                }
-                            >
-                                <Text style={styles.buttonText}>Salvar</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, styles.cancelButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.buttonText}>Cancelar</Text>
-                            </TouchableOpacity>
+                {modalContent === 'updateScore' && (
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Editar Nota</Text>
+                            <Text>{name}</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                onChangeText={setScore}
+                                value={score}
+                                placeholder='Nota'
+                                keyboardType='numeric'
+                            />
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.saveButton]}
+                                    onPress={() => updateScore(id, score)}
+                                >
+                                    <Text style={styles.buttonText}>Salvar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.cancelButton]}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
+                )}
             </Modal>
         </GestureHandlerRootView>
     );
