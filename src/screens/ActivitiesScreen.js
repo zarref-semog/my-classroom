@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
-import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ActivitiesService } from '../services/ActivitiesService';
+import DropdownComponent from '../components/DropdownComponent';
+import { ClassroomsService } from '../services/ClassroomsService';
+import { Icon } from 'react-native-elements';
 
-const Item = ({ navigation, item, classroomId, classroomName, selected, onPress, setModalContent }) => (
+const Item = ({ item, selected, onPress, setModalContent }) => (
     <Pressable style={styles.listContainer} onPress={onPress}>
         <View style={styles.listItem}>
-            <Text style={styles.listTitle}>{item.name}</Text>
+            <Text style={styles.listTitle}>{item.classroom_id}</Text>
             {selected === item.id && (
                 <View style={styles.listAction}>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('updateActivity', item)}>
@@ -28,17 +31,20 @@ export function ActivitiesScreen({ navigation }) {
     const [search, setSearch] = useState('');
     const [id, setId] = useState('');
     const [classroomId, setClassroomId] = useState('');
-    const [description, setDescription] = useState([]);
+    const [description, setDescription] = useState('');
     const [status, setStatus] = useState([]);
     const [activities, setActivities] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [modalContent, setModalContent] = useState('');
+    const [menu, setMenu] = useState([]);
 
     const activitiesService = ActivitiesService();
+    const classroomsService = ClassroomsService();
 
     useEffect(() => {
         loadActivities();
+        convertData();
     }, []);
 
     const loadActivities = () => {
@@ -48,14 +54,14 @@ export function ActivitiesScreen({ navigation }) {
     };
 
 
-    function addActivity(name) {
-        activitiesService.addActivity(name, () => {
+    function addActivity(classroomId, description) {
+        activitiesService.addActivity(classroomId, description, () => {
             loadActivities();
         });
     }
 
-    function updateActivity(id, name) {
-        activitiesService.updateActivity(id, name, () => {
+    function updateActivity(id, classroomId, description, status) {
+        activitiesService.updateActivity(id, classroomId, description, status, () => {
             loadActivities();
         });
     }
@@ -66,17 +72,32 @@ export function ActivitiesScreen({ navigation }) {
         });
     }
 
+    function convertData() {
+        classroomsService.getClassrooms((result) => {
+            let items = result.map((data) => {
+                return { label: data.name, value: data.id }
+            });
+            setMenu(items);
+        })
+    }
+
     function handleSelectedItem(item) {
         item.id !== selectedItem ? setSelectedItem(item.id) : setSelectedItem(null);
     }
 
     function handleModalContent(content, item = {}) {
         if (content === 'addActivity') {
-            setName('');
+            setId('');
+            setClassroomId('');
+            setDescription('');
+            setStatus('');
         } else {
             setId(item.id);
-            setName(item.name);
+            setClassroomId(item.classroom_id)
+            setDescription(item.description);
+            setStatus(item.status);
         }
+        convertData();
         setModalContent(content);
         setModalVisible(true);
     }
@@ -85,7 +106,7 @@ export function ActivitiesScreen({ navigation }) {
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Minhas Turmas</Text>
+                    <Text style={styles.title}>Minhas Atividades</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -120,18 +141,22 @@ export function ActivitiesScreen({ navigation }) {
                 {modalContent === 'addActivity' && (
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>Nova Turma</Text>
+                            <Text style={styles.modalTitle}>Nova Atividade</Text>
+                            <DropdownComponent data={menu} value={classroomId} setValue={setClassroomId} />
                             <TextInput
+                                textAlignVertical='top'
+                                multiline={true}
+                                numberOfLines={4}
                                 style={styles.modalInput}
-                                onChangeText={setName}
-                                value={name}
-                                placeholder='Turma'
+                                onChangeText={setDescription}
+                                value={description}
+                                placeholder='Descrição'
                             />
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.saveButton]}
                                     onPress={() => {
-                                        addActivity(name);
+                                        addActivity(classroomId, description);
                                         setModalVisible(false);
                                     }}
                                 >
@@ -151,17 +176,21 @@ export function ActivitiesScreen({ navigation }) {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>Editar Atividade</Text>
+                            <DropdownComponent data={menu} value={classroomId} setValue={setClassroomId} />
                             <TextInput
+                                textAlignVertical='top'
+                                multiline={true}
+                                numberOfLines={4}
                                 style={styles.modalInput}
-                                onChangeText={setName}
-                                value={name}
-                                placeholder='Turma'
+                                onChangeText={setDescription}
+                                value={description}
+                                placeholder='Descrição'
                             />
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.saveButton]}
                                     onPress={() => {
-                                        updateActivity(id, name);
+                                        updateActivity(id, classroomId, description);
                                         setModalVisible(false);
                                     }}
                                 >
@@ -181,27 +210,12 @@ export function ActivitiesScreen({ navigation }) {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>Visualizar Atividade</Text>
-                            <TextInput
-                                style={styles.modalInput}
-                                onChangeText={setName}
-                                value={name}
-                                placeholder='Turma'
-                            />
+                            <Text>{description}</Text>
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
-                                    onPress={() => {
-                                        updateActivity(id, name);
-                                        setModalVisible(false);
-                                    }}
-                                >
-                                    <Text style={styles.buttonText}>Salvar</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
                                     style={[styles.button, styles.cancelButton]}
-                                    onPress={() => setModalVisible(false)}
-                                >
-                                    <Text style={styles.buttonText}>Cancelar</Text>
+                                    onPress={() => setModalVisible(false)}>
+                                    <Text style={styles.buttonText}>Voltar</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -287,8 +301,8 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     modalInput: {
+        paddingVertical: 10,
         width: '100%',
-        height: 50,
         backgroundColor: 'white',
         borderColor: 'gray',
         borderWidth: 1,

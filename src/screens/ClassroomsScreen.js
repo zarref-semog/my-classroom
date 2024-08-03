@@ -6,7 +6,7 @@ import { Icon } from 'react-native-elements';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
 const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
-    <Pressable style={styles.listContainer} onPress={onPress}>
+    <TouchableOpacity style={styles.listContainer} onPress={onPress}>
         <View style={styles.listItem}>
             <Text style={styles.listTitle}>{item.name}</Text>
             {selected === item.id && (
@@ -30,7 +30,7 @@ const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
                 </View>
             )}
         </View>
-    </Pressable>
+    </TouchableOpacity>
 );
 
 export function ClassroomsScreen({ navigation }) {

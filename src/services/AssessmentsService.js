@@ -43,7 +43,7 @@ export function AssessmentsService() {
             const result = await statement.executeAsync({ $id: id });
             callback(result);
         } catch (e) {
-            console.log('Error: ', e);
+            console.error('Error: ', e);
         } finally {
             statement.finalizeAsync();
         }

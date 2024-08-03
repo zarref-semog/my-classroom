@@ -43,7 +43,7 @@ export function SchedulesService() {
             const result = await runAsync({ $id: id });
             callback(result);
         } catch (e) {
-            console.log('Error: ', e);
+            console.error('Error: ', e);
         } finally {
             statement.finalizeAsync();
         }

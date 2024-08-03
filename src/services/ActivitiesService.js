@@ -4,10 +4,10 @@ export function ActivitiesService() {
 
     const db = useSQLiteContext()
 
-    const addActivity = async (classroom_id, description, status, callback) => {
-        const statement = await db.prepareAsync('INSERT INTO Activities (classroom_id, description, status) VALUES ($classroom_id, $description, $status);');
+    const addActivity = async (classroom_id, description, callback) => {
+        const statement = await db.prepareAsync("INSERT INTO Activities (classroom_id, description, status) VALUES ($classroom_id, $description, 'aberta');");
         try {
-            const result = await statement.executeAsync({ $classroom_id: classroom_id, $description: description, $status: status });
+            const result = await statement.executeAsync({ $classroom_id: classroom_id, $description: description});
             callback(result);
         } catch (e) {
             console.error('Error: ', e);
@@ -43,7 +43,7 @@ export function ActivitiesService() {
             const result = await statement.executeAsync({ $id: id });
             callback(result);
         } catch (e) {
-            console.log('Error: ', e);
+            console.error('Error: ', e);
         } finally {
             statement.finalizeAsync();
         }
