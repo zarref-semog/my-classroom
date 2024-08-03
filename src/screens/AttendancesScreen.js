@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, FlatList, Pressable, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet, FlatList, Pressable, Modal, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AttendancesService } from '../services/AttendancesService';
 import { Icon } from 'react-native-elements';
@@ -55,6 +55,7 @@ export function AttendancesScreen({ route, navigation }) {
     function deleteAttendance(id) {
         attendancesService.deleteAttendance(id, () => {
             loadAttendances();
+            Alert.alert('', 'Chamada excluída com sucesso!');
         });
     }
 

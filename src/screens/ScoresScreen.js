@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScoresService } from '../services/ScoresService';
 import { Icon } from 'react-native-elements';
@@ -8,7 +8,7 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
     return (
         <TouchableOpacity onPress={onPress}>
             <View style={[styles.listItem, styles.listContainer]}>
-                <Text style={styles.listTitle}>{item.student_id}</Text>
+                <Text numberOfLines={1} style={styles.listTitle}>{item.student_id}</Text>
                 {selected === item.id ? (
                     <View style={{ flexDirection: 'row', gap: 10 }}>
                         <Pressable onPress={() => setModalContent('updateScore', item)}>
@@ -16,7 +16,7 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
                         </Pressable>
                     </View>
                 ) : (
-                    <Text style={styles.listTitle}>{item.score}</Text>
+                    <Text style={styles.listInfo}>{item.score}</Text>
                 )}
             </View>
         </TouchableOpacity>
@@ -63,6 +63,8 @@ export function ScoresScreen({ route }) {
         scoresService.updateScore(id, assessmentId, studentId, newScore, () => {
             loadScores();
             setModalVisible(false);
+            setSelectedItem('');
+            Alert.alert('', 'Nota atualizada com sucesso!');
         });
     };
 
@@ -251,6 +253,12 @@ const styles = StyleSheet.create({
         height: 80,
     },
     listTitle: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+        width: '65%',
+    },
+    listInfo: {
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',

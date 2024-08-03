@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ActivitiesService } from '../services/ActivitiesService';
 import DropdownComponent from '../components/DropdownComponent';
@@ -9,7 +9,7 @@ import { Icon } from 'react-native-elements';
 const Item = ({ item, selected, onPress, setModalContent }) => (
     <TouchableOpacity style={styles.listContainer} onPress={onPress}>
         <View style={styles.listItem}>
-            <Text style={styles.listTitle}>{item.classroom_id}</Text>
+            <Text numberOfLines={1} style={styles.listTitle}>{item.classroom_id}</Text>
             {selected === item.id && (
                 <View style={styles.listAction}>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('updateActivity', item)}>
@@ -57,18 +57,21 @@ export function ActivitiesScreen({ navigation }) {
     function addActivity(classroomId, description) {
         activitiesService.addActivity(classroomId, description, () => {
             loadActivities();
+            Alert.alert('', 'Atividade adicionada com sucesso!');
         });
     }
 
     function updateActivity(id, classroomId, description, status) {
         activitiesService.updateActivity(id, classroomId, description, status, () => {
             loadActivities();
+            Alert.alert('', 'Atividade atualizada com sucesso!');
         });
     }
 
     function deleteActivity(id) {
         activitiesService.deleteActivity(id, () => {
             loadActivities();
+            Alert.alert('', 'Atividade excluída com sucesso!');
         });
     }
 
@@ -374,6 +377,7 @@ const styles = StyleSheet.create({
     listTitle: {
         color: 'white',
         fontWeight: 'bold',
+        width: '65%',
     },
     listAction: {
         flexDirection: 'row',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AssessmentsService } from '../services/AssessmentsService';
@@ -9,7 +9,7 @@ import { StudentsService } from '../services/StudentsService';
 const Item = ({ navigation, item, classroomId, classroomName, selected, onPress, setModalContent }) => (
     <Pressable style={styles.listContainer} onPress={onPress}>
         <View style={styles.listItem}>
-            <Text style={styles.listTitle}>{item.name}</Text>
+            <Text numberOfLines={1} style={styles.listTitle}>{item.name}</Text>
             {selected === item.id ? (
                 <View style={styles.listAction}>
                     <Pressable style={styles.listButton} onPress={() => {
@@ -31,7 +31,7 @@ const Item = ({ navigation, item, classroomId, classroomName, selected, onPress,
                 </View>
             ) : (
                 <View style={styles.listAction}>
-                    <Text style={styles.listTitle}>{item.passing_score}</Text>
+                    <Text style={styles.listInfo}>{item.passing_score}</Text>
                 </View>
             )}
         </View>
@@ -77,18 +77,21 @@ export function AssessmentsScreen({ route, navigation }) {
         assessmentsService.addAssessment(classroomId, name, passingScore, (data) => {
             scoresService.addManyScores(students, data.lastInsertRowId);
             loadAssessments();
+            Alert.alert('', 'Avaliação adicionada com sucesso!');
         });
     }
 
     function updateAssessment(id, name, passingScore) {
         assessmentsService.updateAssessment(id, classroomId, name, passingScore, () => {
             loadAssessments();
+            Alert.alert('', 'Avaliação atualizada com sucesso!');
         });
     }
 
     function deleteAssessment(id) {
         assessmentsService.deleteAssessment(id, () => {
             loadAssessments();
+            Alert.alert('', 'Avaliação excluída com sucesso!');
         });
     }
 
@@ -375,12 +378,18 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+        width: '65%',
+    },
+    listInfo: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     listAction: {
         flexDirection: 'row',
         marginHorizontal: 10,
         justifyContent: 'space-between',
-        gap: 20
+        gap: 10
     },
     listButton: {
         width: 30,

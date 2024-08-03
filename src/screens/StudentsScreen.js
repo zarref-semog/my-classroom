@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet, Modal, FlatList, TouchableOpacity, Pressable } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StudentsService } from '../services/StudentsService';
 import { Icon } from 'react-native-elements';
@@ -22,8 +22,8 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
                             </>
                         ) : (
                             <>
-                                <Text style={{ ...styles.listTitle, color: 'blue' }}>10</Text>
-                                <Text style={{ ...styles.listTitle, color: 'red' }}>10</Text>
+                                <Text style={{ ...styles.listInfo, color: 'blue' }}>10</Text>
+                                <Text style={{ ...styles.listInfo, color: 'red' }}>10</Text>
                             </>
                         )
                     }
@@ -64,18 +64,21 @@ export function StudentsScreen({ route, navigation }) {
     function addStudent(name) {
         studentsService.addStudent(classroomId, name, () => {
             loadStudents();
+            Alert.alert('', 'Aluno adicionado com sucesso!');
         });
     }
 
     function updateStudent(id, name) {
         studentsService.updateStudent(id, classroomId, name, () => {
             loadStudents();
+            Alert.alert('', 'Aluno atualizado com sucesso!');
         });
     }
 
     function deleteStudent(id) {
         studentsService.deleteStudent(id, () => {
             loadStudents();
+            Alert.alert('', 'Aluno excluído com sucesso!');
         });
     }
 
@@ -340,6 +343,12 @@ const styles = StyleSheet.create({
         height: 80,
     },
     listTitle: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+        width: '68%'
+    },
+    listInfo: {
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',

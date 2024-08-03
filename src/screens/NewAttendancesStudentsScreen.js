@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RadioButton } from '../components/RadioButton';
 import { StudentsService } from '../services/StudentsService';
@@ -10,7 +10,7 @@ import { Icon } from 'react-native-elements';
 const Item = ({ item, selectedOption, onPress }) => {
     return (
         <View style={[styles.listItem, styles.listContainer]}>
-            <Text style={styles.listTitle}>{item.name}</Text>
+            <Text numberOfRows={1} style={styles.listTitle}>{item.name}</Text>
             <View style={{ flexDirection: 'row', gap: 20 }}>
                 <RadioButton
                     selected={selectedOption === 'presente'}
@@ -64,10 +64,10 @@ export function NewAttendancesStudentsScreen({ route, navigation }) {
             attendancesService.addAttendance(classroomId, new Date().toLocaleDateString(), (result) => {
                 attendancesStudentsService.addManyAttendanceStudent(attendances, result.lastInsertRowId);
             })
-            alert('Chamada salva com sucesso!');
+            Alert.alert('', 'Chamada salva com sucesso!');
         } catch (error) {
             console.error('Error saving attendances:', error);
-            alert('Falha ao salvar chamada.');
+            Alert.alert('', 'Falha ao salvar chamada.');
         } finally {
             navigation.goBack();
         }
@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+        width: '68%',
     },
     listAction: {
         flexDirection: 'row',
@@ -252,6 +253,7 @@ const styles = StyleSheet.create({
         color: '#6b6b6b',
     },
     radioButtonText: {
-        color: 'white'
+        color: 'white',
+        fontWeight:  'bold',
     }
 });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, Modal, FlatList, TouchableOpacity, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Alert, TextInput, Modal, FlatList, TouchableOpacity, Pressable, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ClassroomsService } from '../services/ClassroomsService';
 import { Icon } from 'react-native-elements';
@@ -8,7 +8,7 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
     <TouchableOpacity style={styles.listContainer} onPress={onPress}>
         <View style={styles.listItem}>
-            <Text style={styles.listTitle}>{item.name}</Text>
+            <Text numberOfLines={1} style={styles.listTitle}>{item.name}</Text>
             {selected === item.id && (
                 <View style={styles.listAction}>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('updateClassroom', item)}>
@@ -86,18 +86,21 @@ export function ClassroomsScreen({ navigation }) {
     function addClassroom(name) {
         classroomsService.addClassroom(name, () => {
             loadClassrooms();
+            Alert.alert('', 'Sala de aula adicionada com sucesso!');
         });
     }
 
     function updateClassroom(id, name) {
         classroomsService.updateClassroom(id, name, () => {
             loadClassrooms();
+            Alert.alert('', 'Sala de aula atualizada com sucesso!');
         });
     }
 
     function deleteClassroom(id) {
         classroomsService.deleteClassroom(id, () => {
             loadClassrooms();
+            Alert.alert('', 'Sala de aula excluída com sucesso!');
         });
     }
 
@@ -366,6 +369,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+        width: '68%',
     },
     listAction: {
         flexDirection: 'row',

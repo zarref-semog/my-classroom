@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AttendancesStudentsService } from '../services/AttendancesStudentsService';
 
 const Item = ({ item }) => {
     return (
         <View style={[styles.listItem, styles.listContainer]}>
-            <Text style={styles.listTitle}>{item.student_id}</Text>
-            <Text style={styles.listTitle}>{item.status}</Text>
+            <Text numberOfLines={1} style={styles.listTitle}>{item.student_id}</Text>
+            <Text style={styles.listInfo}>{item.status}</Text>
         </View>
     );
 }
@@ -174,6 +174,12 @@ const styles = StyleSheet.create({
         height: 80,
     },
     listTitle: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+        width: '68%',
+    },
+    listInfo: {
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
