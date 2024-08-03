@@ -9,7 +9,7 @@ import { Icon } from 'react-native-elements';
 const Item = ({ item, selected, onPress, setModalContent }) => (
     <TouchableOpacity style={styles.listContainer} onPress={onPress}>
         <View style={styles.listItem}>
-            <Text numberOfLines={1} style={styles.listTitle}>{item.classroom_id}</Text>
+            <Text numberOfLines={1} style={styles.listTitle}>{item.classroom_name}</Text>
             {selected === item.id && (
                 <View style={styles.listAction}>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('updateActivity', item)}>

@@ -33,17 +33,31 @@ export function ScoresService() {
 
     const getScores = async (assessment_id, callback) => {
         try {
-            const result = await db.getAllAsync(`SELECT * FROM Scores WHERE assessment_id = ${assessment_id};`);
+            const result = await db.getAllAsync(`
+                SELECT
+                    Scores.id,
+                    Scores.assessment_id,
+                    Scores.student_id,
+                    Scores.score,
+                    Students.id AS student_id,
+                    Students.name AS student_name
+                FROM 
+                    Scores 
+                INNER JOIN
+                    Students ON Students.id = Scores.student_id
+                WHERE 
+                    Scores.assessment_id = ${assessment_id};
+            `);
             callback(result);
         } catch (e) {
             console.error('Error: ', e);
         }
     };
 
-    const updateScore = async (id, assessment_id, student_id, score, callback) => {
+    const updateScore = async (id, score, callback) => {
         try {
-            const statement = await db.prepareAsync('UPDATE Scores SET assessment_id = $assessment_id, student_id = $student_id, score = $score WHERE id = $id;');
-            const result = await statement.executeAsync({ $assessment_id: assessment_id, $student_id: student_id, $score: score, $id: id });
+            const statement = await db.prepareAsync('UPDATE Scores SET score = $score WHERE id = $id;');
+            const result = await statement.executeAsync({ $score: score, $id: id });
             callback(result);
         } catch (e) {
             console.error('Error: ', e);

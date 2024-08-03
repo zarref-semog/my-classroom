@@ -8,7 +8,7 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
     return (
         <TouchableOpacity onPress={onPress}>
             <View style={[styles.listItem, styles.listContainer]}>
-                <Text numberOfLines={1} style={styles.listTitle}>{item.student_id}</Text>
+                <Text numberOfLines={1} style={styles.listTitle}>{item.student_name}</Text>
                 {selected === item.id ? (
                     <View style={{ flexDirection: 'row', gap: 10 }}>
                         <Pressable onPress={() => setModalContent('updateScore', item)}>
@@ -16,7 +16,7 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
                         </Pressable>
                     </View>
                 ) : (
-                    <Text style={styles.listInfo}>{item.score}</Text>
+                    <Text style={styles.listInfo}>{item.score.toString().replace('.', ',')}</Text>
                 )}
             </View>
         </TouchableOpacity>
@@ -26,7 +26,6 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
 export function ScoresScreen({ route }) {
     const [search, setSearch] = useState('');
     const [id, setId] = useState('');
-    const [name, setName] = useState('');
     const [score, setScore] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -53,14 +52,14 @@ export function ScoresScreen({ route }) {
 
     function handleModalContent(content, item = {}) {
         setId(item.id);
-        setName(item.student_id);
-        setScore(item.score);
+        setScore(item.score.toString().replace('.', ','));
         setModalContent(content);
         setModalVisible(true);
     }
 
-    const updateScore = (studentId, newScore) => {
-        scoresService.updateScore(id, assessmentId, studentId, newScore, () => {
+    const updateScore = (id, score) => {
+        const parsedScore = parseFloat(score.replace(',', '.'));
+        scoresService.updateScore(id, parsedScore, () => {
             loadScores();
             setModalVisible(false);
             setSelectedItem('');

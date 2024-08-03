@@ -6,7 +6,7 @@ import { AttendancesStudentsService } from '../services/AttendancesStudentsServi
 const Item = ({ item }) => {
     return (
         <View style={[styles.listItem, styles.listContainer]}>
-            <Text numberOfLines={1} style={styles.listTitle}>{item.student_id}</Text>
+            <Text numberOfLines={1} style={styles.listTitle}>{item.student_name}</Text>
             <Text style={styles.listInfo}>{item.status}</Text>
         </View>
     );

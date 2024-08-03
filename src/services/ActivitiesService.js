@@ -7,7 +7,7 @@ export function ActivitiesService() {
     const addActivity = async (classroom_id, description, callback) => {
         const statement = await db.prepareAsync("INSERT INTO Activities (classroom_id, description, status) VALUES ($classroom_id, $description, 'aberta');");
         try {
-            const result = await statement.executeAsync({ $classroom_id: classroom_id, $description: description});
+            const result = await statement.executeAsync({ $classroom_id: classroom_id, $description: description });
             callback(result);
         } catch (e) {
             console.error('Error: ', e);
@@ -18,7 +18,19 @@ export function ActivitiesService() {
 
     const getActivities = async (callback) => {
         try {
-            const result = await db.getAllAsync('SELECT * FROM Activities;');
+            const result = await db.getAllAsync(`
+                SELECT 
+                    Activities.id AS id,
+                    Activities.classroom_id,
+                    Activities.description,
+                    Activities.status AS classroom_status,
+                    Classrooms.id AS classroom_id,
+                    Classrooms.name AS classroom_name
+                FROM 
+                    Activities 
+                INNER JOIN 
+                    Classrooms ON Classrooms.id = Activities.classroom_id;
+            `);
             callback(result);
         } catch (e) {
             console.error('Error: ', e);

@@ -21,22 +21,36 @@ export function AttendancesStudentsService() {
             console.error('Invalid attendances array');
             return;
         }
-    
+
         let sql = '';
         attendances.forEach(att => {
             sql += `INSERT INTO Attendances_Students (attendance_id, student_id, status) VALUES (${attendance_id}, ${att.student_id}, '${att.status}');`
         });
-    
+
         try {
             await db.execAsync(sql);
         } catch (e) {
             console.error('Error: ', e);
         }
     };
-    
+
     const getAttendancesStudents = async (attendance_id, callback) => {
         try {
-            const result = await db.getAllAsync(`SELECT * FROM Attendances_Students WHERE attendance_id = ${attendance_id};`);
+            const result = await db.getAllAsync(`
+                SELECT 
+                    Attendances_Students.id AS id,
+                    Attendances_Students.attendance_id,
+                    Attendances_Students.student_id AS student_id,
+                    Attendances_Students.status,
+                    Students.id AS student_id,
+                    Students.name AS student_name
+                FROM 
+                    Attendances_Students
+                INNER JOIN 
+                    Students ON Students.id = Attendances_Students.student_id
+                WHERE 
+                    Attendances_Students.attendance_id = ${attendance_id};
+            `);
             callback(result);
         } catch (e) {
             console.error('Error: ', e);
