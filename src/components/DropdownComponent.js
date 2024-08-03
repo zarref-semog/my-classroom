@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   dropdown: {
     width: '100%',
     margin: 16,
+    marginTop: 0,
     height: 50,
     backgroundColor: 'white',
     borderRadius: 12,

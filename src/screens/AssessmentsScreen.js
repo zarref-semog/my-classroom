@@ -20,18 +20,18 @@ const Item = ({ navigation, item, classroomId, classroomName, selected, onPress,
                             assessmentName: item.name
                         });
                     }}>
-                        <Icon name='address-book' type='font-awesome' color='#e8e8e8' />
+                        <Icon name='address-book' type='font-awesome' color='white' />
                     </Pressable>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('updateAssessment', item)}>
-                        <Icon name='pencil' type='font-awesome' color='blue' />
+                        <Icon name='pencil' type='font-awesome' color='white' />
                     </Pressable>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('deleteAssessment', item)}>
-                        <Icon name='trash' type='font-awesome' color='red' />
+                        <Icon name='trash' type='font-awesome' color='white' />
                     </Pressable>
                 </View>
             ) : (
                 <View style={styles.listAction}>
-                    <Text>{item.passing_score}</Text>
+                    <Text style={styles.listTitle}>{item.passing_score}</Text>
                 </View>
             )}
         </View>
@@ -70,7 +70,7 @@ export function AssessmentsScreen({ route, navigation }) {
     }
 
     function loadAssessments() {
-        assessmentsService.getAssessments((data) => setAssessments(data));
+        assessmentsService.getAssessments(classroomId, (data) => setAssessments(data));
     }
 
     function addAssessment(name, passingScore) {
@@ -122,7 +122,10 @@ export function AssessmentsScreen({ route, navigation }) {
                         value={search}
                         placeholder='Buscar Avaliação'
                     />
-                    <Button title='Adicionar' onPress={() => handleModalContent('addAssessment')} />
+                    <TouchableOpacity style={styles.addButton} onPress={() => handleModalContent('addAssessment')}>
+                        <Icon name='plus-square' type='font-awesome' color='white' />
+                        <Text style={styles.addButtonText}>Adicionar</Text>
+                    </TouchableOpacity>
                 </View>
                 <FlatList
                     data={filteredAssessments}
@@ -166,7 +169,7 @@ export function AssessmentsScreen({ route, navigation }) {
                             />
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.safeButton]}
                                     onPress={() => {
                                         addAssessment(name, parseFloat(passingScore));
                                         setModalVisible(false);
@@ -203,7 +206,7 @@ export function AssessmentsScreen({ route, navigation }) {
                             />
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.safeButton]}
                                     onPress={() => {
                                         updateAssessment(id, name, parseFloat(passingScore));
                                         setModalVisible(false);
@@ -225,10 +228,10 @@ export function AssessmentsScreen({ route, navigation }) {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>Excluir Avaliação</Text>
-                            <Text>Deseja realmente excluir esta avaliação?</Text>
+                            <Text style={styles.modalText}>Deseja realmente excluir esta avaliação?</Text>
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.dangerButton]}
                                     onPress={() => {
                                         deleteAssessment(id);
                                         setModalVisible(false);
@@ -254,13 +257,9 @@ export function AssessmentsScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 50,
+        marginTop: 40,
         paddingHorizontal: 16,
         paddingBottom: 0,
-    },
-    header: {
-        alignItems: 'center',
-        marginBottom: 20,
     },
     inputContainer: {
         flexDirection: 'row',
@@ -270,9 +269,9 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         height: 40,
+        fontSize: 16,
         backgroundColor: 'white',
-        borderColor: 'gray',
-        borderWidth: 1,
+        borderRadius: 5,
         marginRight: 8,
         paddingLeft: 8,
     },
@@ -280,7 +279,11 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: 16,
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#6b6b6b',
+        textAlign: 'center',
+        marginBottom: 20,
     },
     modalOverlay: {
         flex: 1,
@@ -291,21 +294,25 @@ const styles = StyleSheet.create({
     modalContainer: {
         width: 300,
         padding: 20,
-        backgroundColor: '#f4c095',
+        backgroundColor: '#e8e8e8',
         borderRadius: 10,
         alignItems: 'center',
     },
     modalTitle: {
+        color: '#6b6b6b',
         fontSize: 20,
-        marginBottom: 20,
-        color: 'white'
+        fontWeight: 'bold',
+        marginBottom: 20
+    },
+    modalText: {
+        fontSize: 16,
     },
     modalInput: {
         width: '100%',
         height: 50,
+        fontSize: 16,
         backgroundColor: 'white',
-        borderColor: 'gray',
-        borderWidth: 1,
+        borderRadius: 5,
         marginBottom: 12,
         paddingLeft: 8,
     },
@@ -323,11 +330,30 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginHorizontal: 5,
     },
-    saveButton: {
-        backgroundColor: '#1d7874',
+    addButton: {
+        width: 'auto',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 10,
+        borderRadius: 5,
+        backgroundColor: '#4a90e2',
+        height: 40,
+        paddingVertical: 5,
+        paddingHorizontal: 10
+    },
+    addButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    safeButton: {
+        backgroundColor: '#679289',
+    },
+    dangerButton: {
+        backgroundColor: '#d9534f',
     },
     cancelButton: {
-        backgroundColor: '#ee2e31',
+        backgroundColor: '#b8b8b899',
     },
     buttonText: {
         color: 'white',
@@ -336,6 +362,7 @@ const styles = StyleSheet.create({
     listContainer: {
         backgroundColor: '#679289',
         marginBottom: 10,
+        borderRadius: 10
     },
     listItem: {
         flexDirection: 'row',
@@ -346,13 +373,14 @@ const styles = StyleSheet.create({
     },
     listTitle: {
         color: 'white',
+        fontSize: 16,
         fontWeight: 'bold',
     },
     listAction: {
         flexDirection: 'row',
         marginHorizontal: 10,
         justifyContent: 'space-between',
-        gap: 10
+        gap: 20
     },
     listButton: {
         width: 30,
@@ -361,4 +389,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 100
     },
+    optionsContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100,
+        width: 30,
+        height: 30
+    },
+    menuOption: {
+        flexDirection: 'row',
+        gap: 10,
+        padding: 10,
+    },
+    menuText: {
+        color: '#6b6b6b',
+    }
 });

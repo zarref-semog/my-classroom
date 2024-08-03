@@ -12,19 +12,43 @@ const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
             {selected === item.id && (
                 <View style={styles.listAction}>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('updateClassroom', item)}>
-                        <Icon name='pencil' type='font-awesome' color='blue' />
+                        <Icon name='pencil' type='font-awesome' color='white' />
                     </Pressable>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('deleteClassroom', item)}>
-                        <Icon name='trash' type='font-awesome' color='red' />
+                        <Icon name='trash' type='font-awesome' color='white' />
                     </Pressable>
                     <Menu>
                         <MenuTrigger style={styles.listButton}>
                             <Icon name='ellipsis-v' type='font-awesome' color='white' />
                         </MenuTrigger>
                         <MenuOptions>
-                            <MenuOption style={styles.menuOption} onSelect={() => navigation.navigate('Students', { classroomId: item.id, classroomName: item.name })} text='Alunos' />
-                            <MenuOption style={styles.menuOption} onSelect={() => navigation.navigate('Attendances', { classroomId: item.id, classroomName: item.name })} text='Chamada' />
-                            <MenuOption style={{ paddingVertical: 10 }} onSelect={() => navigation.navigate('Assessments', { classroomId: item.id, classroomName: item.name})} text='Avaliações' />
+                            <MenuOption
+                                style={styles.menuOption}
+                                onSelect={() => {
+                                    navigation.navigate('Students', { classroomId: item.id, classroomName: item.name })
+                                }}
+                            >
+                                <Icon name='group' type='font-awesome' color='#888888' />
+                                <Text style={styles.menuText}>Alunos</Text>
+                            </MenuOption>
+                            <MenuOption
+                                style={styles.menuOption}
+                                onSelect={() => {
+                                    navigation.navigate('Attendances', { classroomId: item.id, classroomName: item.name })
+                                }}
+                            >
+                                <Icon name='check-square' type='font-awesome' color='#888888' />
+                                <Text style={styles.menuText}>Chamadas</Text>
+                            </MenuOption>
+                            <MenuOption
+                                style={styles.menuOption}
+                                onSelect={() => {
+                                    navigation.navigate('Assessments', { classroomId: item.id, classroomName: item.name })
+                                }}
+                            >
+                                <Icon name='pencil-square' type='font-awesome' color='#888888' />
+                                <Text style={styles.menuText}>Avaliações</Text>
+                            </MenuOption>
                         </MenuOptions>
                     </Menu>
                 </View>
@@ -58,25 +82,25 @@ export function ClassroomsScreen({ navigation }) {
         cr.name.toLowerCase().includes(search.toLowerCase())
     );
 
-    
+
     function addClassroom(name) {
         classroomsService.addClassroom(name, () => {
             loadClassrooms();
         });
     }
-    
+
     function updateClassroom(id, name) {
         classroomsService.updateClassroom(id, name, () => {
             loadClassrooms();
         });
     }
-    
+
     function deleteClassroom(id) {
         classroomsService.deleteClassroom(id, () => {
             loadClassrooms();
         });
     }
-    
+
     function handleSelectedItem(item) {
         item.id !== selectedItem ? setSelectedItem(item.id) : setSelectedItem(null);
     }
@@ -95,7 +119,7 @@ export function ClassroomsScreen({ navigation }) {
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
-                <View style={styles.header}>
+                <View>
                     <Text style={styles.title}>Minhas Turmas</Text>
                 </View>
                 <View style={styles.inputContainer}>
@@ -105,7 +129,10 @@ export function ClassroomsScreen({ navigation }) {
                         value={search}
                         placeholder='Buscar Turma'
                     />
-                    <Button title='Adicionar' onPress={() => handleModalContent('addClassroom')} />
+                    <TouchableOpacity style={styles.addButton} onPress={() => handleModalContent('addClassroom')}>
+                        <Icon name='plus-square' type='font-awesome' color='white' />
+                        <Text style={styles.addButtonText}>Adicionar</Text>
+                    </TouchableOpacity>
                 </View>
                 <FlatList
                     data={filteredClassrooms}
@@ -140,7 +167,7 @@ export function ClassroomsScreen({ navigation }) {
                             />
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.safeButton]}
                                     onPress={() => {
                                         addClassroom(name);
                                         setModalVisible(false);
@@ -170,7 +197,7 @@ export function ClassroomsScreen({ navigation }) {
                             />
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.safeButton]}
                                     onPress={() => {
                                         updateClassroom(id, name);
                                         setModalVisible(false);
@@ -195,7 +222,7 @@ export function ClassroomsScreen({ navigation }) {
                             <Text>Deseja realmente excluir esta turma?</Text>
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.dangerButton]}
                                     onPress={() => {
                                         deleteClassroom(id);
                                         setModalVisible(false);
@@ -221,13 +248,9 @@ export function ClassroomsScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 50,
+        marginTop: 40,
         paddingHorizontal: 16,
         paddingBottom: 0,
-    },
-    header: {
-        alignItems: 'center',
-        marginBottom: 20,
     },
     inputContainer: {
         flexDirection: 'row',
@@ -237,9 +260,9 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         height: 40,
+        fontSize: 16,
         backgroundColor: 'white',
-        borderColor: 'gray',
-        borderWidth: 1,
+        borderRadius: 5,
         marginRight: 8,
         paddingLeft: 8,
     },
@@ -247,7 +270,11 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: 16,
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#6b6b6b',
+        textAlign: 'center',
+        marginBottom: 20,
     },
     modalOverlay: {
         flex: 1,
@@ -258,21 +285,25 @@ const styles = StyleSheet.create({
     modalContainer: {
         width: 300,
         padding: 20,
-        backgroundColor: '#f4c095',
+        backgroundColor: '#e8e8e8',
         borderRadius: 10,
         alignItems: 'center',
     },
     modalTitle: {
+        color: '#6b6b6b',
         fontSize: 20,
-        marginBottom: 20,
-        color: 'white'
+        fontWeight: 'bold',
+        marginBottom: 20
+    },
+    modalText: {
+        fontSize: 16,
     },
     modalInput: {
         width: '100%',
         height: 50,
+        fontSize: 16,
         backgroundColor: 'white',
-        borderColor: 'gray',
-        borderWidth: 1,
+        borderRadius: 5,
         marginBottom: 12,
         paddingLeft: 8,
     },
@@ -290,11 +321,30 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginHorizontal: 5,
     },
-    saveButton: {
-        backgroundColor: '#1d7874',
+    addButton: {
+        width: 'auto',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 10,
+        borderRadius: 5,
+        backgroundColor: '#4a90e2',
+        height: 40,
+        paddingVertical: 5,
+        paddingHorizontal: 10
+    },
+    addButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    safeButton: {
+        backgroundColor: '#679289',
+    },
+    dangerButton: {
+        backgroundColor: '#d9534f',
     },
     cancelButton: {
-        backgroundColor: '#ee2e31',
+        backgroundColor: '#b8b8b899',
     },
     buttonText: {
         color: 'white',
@@ -303,6 +353,7 @@ const styles = StyleSheet.create({
     listContainer: {
         backgroundColor: '#679289',
         marginBottom: 10,
+        borderRadius: 10
     },
     listItem: {
         flexDirection: 'row',
@@ -313,6 +364,7 @@ const styles = StyleSheet.create({
     },
     listTitle: {
         color: 'white',
+        fontSize: 16,
         fontWeight: 'bold',
     },
     listAction: {
@@ -336,8 +388,11 @@ const styles = StyleSheet.create({
         height: 30
     },
     menuOption: {
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#b3b3b3'
+        flexDirection: 'row',
+        gap: 10,
+        padding: 10,
     },
+    menuText: {
+        color: '#6b6b6b',
+    }
 });

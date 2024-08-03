@@ -6,7 +6,7 @@ import { Icon } from 'react-native-elements';
 
 const Item = ({ item, selected, onPress, setModalContent }) => {
     return (
-        <Pressable style={styles.listContainer} onPress={onPress}>
+        <TouchableOpacity style={styles.listContainer} onPress={onPress}>
             <View style={styles.listItem}>
                 <Text numberOfLines={1} style={styles.listTitle}>{item.name}</Text>
                 <View style={styles.listAction}>
@@ -14,10 +14,10 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
                         selected === item.id ? (
                             <>
                                 <Pressable onPress={() => setModalContent('updateStudent', item)}>
-                                    <Icon name='pencil' type='font-awesome' color='blue' />
+                                    <Icon name='pencil' type='font-awesome' color='white' />
                                 </Pressable>
                                 <Pressable onPress={() => setModalContent('deleteStudent', item)}>
-                                    <Icon name='trash' type='font-awesome' color='red' />
+                                    <Icon name='trash' type='font-awesome' color='white' />
                                 </Pressable>
                             </>
                         ) : (
@@ -29,7 +29,7 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
                     }
                 </View>
             </View>
-        </Pressable>
+        </TouchableOpacity>
     );
 }
 
@@ -107,7 +107,10 @@ export function StudentsScreen({ route, navigation }) {
                         value={search}
                         placeholder='Buscar Aluno'
                     />
-                    <Button title='Adicionar' onPress={() => { handleModalContent('addStudent') }} />
+                    <TouchableOpacity style={styles.addButton} onPress={() => handleModalContent('addStudent')}>
+                        <Icon name='plus-square' type='font-awesome' color='white' />
+                        <Text style={styles.addButtonText}>Adicionar</Text>
+                    </TouchableOpacity>
                 </View>
                 <FlatList
                     data={filteredStudents}
@@ -141,7 +144,7 @@ export function StudentsScreen({ route, navigation }) {
                             />
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.safeButton]}
                                     onPress={() => {
                                         addStudent(name)
                                         setModalVisible(false);
@@ -171,7 +174,7 @@ export function StudentsScreen({ route, navigation }) {
                             />
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.safeButton]}
                                     onPress={() => {
                                         updateStudent(id, name);
                                         setModalVisible(false);
@@ -193,10 +196,10 @@ export function StudentsScreen({ route, navigation }) {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>Excluir Aluno</Text>
-                            <Text>Deseja realmente excluir este aluno?</Text>
+                            <Text style={styles.modalText}>Deseja realmente excluir este aluno?</Text>
                             <View style={styles.modalButtonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
+                                    style={[styles.button, styles.dangerButton]}
                                     onPress={() => {
                                         deleteStudent(id);
                                         setModalVisible(false);
@@ -222,13 +225,9 @@ export function StudentsScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 50,
+        marginTop: 40,
         paddingHorizontal: 16,
         paddingBottom: 0,
-    },
-    header: {
-        alignItems: 'center',
-        marginBottom: 20,
     },
     inputContainer: {
         flexDirection: 'row',
@@ -238,9 +237,9 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         height: 40,
+        fontSize: 16,
         backgroundColor: 'white',
-        borderColor: 'gray',
-        borderWidth: 1,
+        borderRadius: 5,
         marginRight: 8,
         paddingLeft: 8,
     },
@@ -248,7 +247,11 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: 16,
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#6b6b6b',
+        textAlign: 'center',
+        marginBottom: 20,
     },
     modalOverlay: {
         flex: 1,
@@ -259,21 +262,25 @@ const styles = StyleSheet.create({
     modalContainer: {
         width: 300,
         padding: 20,
-        backgroundColor: '#f4c095',
+        backgroundColor: '#e8e8e8',
         borderRadius: 10,
         alignItems: 'center',
     },
     modalTitle: {
+        color: '#6b6b6b',
         fontSize: 20,
-        marginBottom: 20,
-        color: 'white'
+        fontWeight: 'bold',
+        marginBottom: 20
+    },
+    modalText: {
+        fontSize: 16,
     },
     modalInput: {
         width: '100%',
         height: 50,
+        fontSize: 16,
         backgroundColor: 'white',
-        borderColor: 'gray',
-        borderWidth: 1,
+        borderRadius: 5,
         marginBottom: 12,
         paddingLeft: 8,
     },
@@ -291,11 +298,30 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginHorizontal: 5,
     },
-    saveButton: {
-        backgroundColor: '#1d7874',
+    addButton: {
+        width: 'auto',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 10,
+        borderRadius: 5,
+        backgroundColor: '#4a90e2',
+        height: 40,
+        paddingVertical: 5,
+        paddingHorizontal: 10
+    },
+    addButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    safeButton: {
+        backgroundColor: '#679289',
+    },
+    dangerButton: {
+        backgroundColor: '#d9534f',
     },
     cancelButton: {
-        backgroundColor: '#ee2e31',
+        backgroundColor: '#b8b8b899',
     },
     buttonText: {
         color: 'white',
@@ -304,6 +330,7 @@ const styles = StyleSheet.create({
     listContainer: {
         backgroundColor: '#679289',
         marginBottom: 10,
+        borderRadius: 10
     },
     listItem: {
         flexDirection: 'row',
@@ -312,23 +339,37 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         height: 80,
     },
-    listOptions: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 5,
-        marginTop: 10,
-        marginBottom: 10
-    },
-    listButton: {
-        marginRight: 5,
-    },
     listTitle: {
-        maxWidth: 250,
         color: 'white',
+        fontSize: 16,
         fontWeight: 'bold',
     },
     listAction: {
         flexDirection: 'row',
+        marginHorizontal: 10,
+        justifyContent: 'space-between',
         gap: 20
+    },
+    listButton: {
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100
+    },
+    optionsContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100,
+        width: 30,
+        height: 30
+    },
+    menuOption: {
+        flexDirection: 'row',
+        gap: 10,
+        padding: 10,
+    },
+    menuText: {
+        color: '#6b6b6b',
     }
 });

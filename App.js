@@ -15,19 +15,41 @@ import { NewAttendancesStudentsScreen } from './src/screens/NewAttendancesStuden
 import { AssessmentsScreen } from './src/screens/AssessmentsScreen';
 import { AttendancesScreen } from './src/screens/AttendancesScreen';
 import { StudentsScreen } from './src/screens/StudentsScreen';
+import { Icon } from 'react-native-elements';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
 
 function MyClassroomTabs() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false, }}>
-      <Tab.Screen name='Classes' component={ClassroomsScreen} />
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          if (route.name === 'Classrooms') {
+            return <Icon name='graduation-cap' type='font-awesome' size={size} color={color} />;
+          } else if (route.name === 'Activities') {
+            return <Icon name='book' type='font-awesome' size={size} color={color} />;
+          } else if (route.name === 'Schedule') {
+            return <Icon name='calendar' type='font-awesome' size={size} color={color} />;
+          }
+        },
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: '#7dace3',
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 10,
+          backgroundColor: '#4a90e2'
+        },
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name='Classrooms' component={ClassroomsScreen} />
       <Tab.Screen name='Activities' component={ActivitiesScreen} />
       <Tab.Screen name='Schedule' component={SchedulesScreen} />
     </Tab.Navigator>
   );
 }
+
+const Stack = createNativeStackNavigator();
 
 function MyClassroomStack() {
   return (
@@ -39,7 +61,6 @@ function MyClassroomStack() {
       <Stack.Screen name='NewAttendancesStudents' component={NewAttendancesStudentsScreen} />
       <Stack.Screen name='Assessments' component={AssessmentsScreen} />
       <Stack.Screen name='Scores' component={ScoresScreen} />
-
     </Stack.Navigator>
   );
 }

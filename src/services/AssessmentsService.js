@@ -16,9 +16,9 @@ export function AssessmentsService() {
         }
     };
 
-    const getAssessments = async (callback) => {
+    const getAssessments = async (classroom_id, callback) => {
         try {
-            const result = await db.getAllAsync('SELECT * FROM Assessments;');
+            const result = await db.getAllAsync(`SELECT * FROM Assessments WHERE classroom_id = ${classroom_id};`);
             callback(result);
         } catch (e) {
             console.error('Error: ', e);
