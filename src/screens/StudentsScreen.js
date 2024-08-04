@@ -62,6 +62,7 @@ export function StudentsScreen({ route, navigation }) {
 
 
     function addStudent(name) {
+        if (!name) return;
         studentsService.addStudent(classroomId, name, () => {
             loadStudents();
             Alert.alert('', 'Aluno adicionado com sucesso!');
@@ -69,6 +70,7 @@ export function StudentsScreen({ route, navigation }) {
     }
 
     function updateStudent(id, name) {
+        if (!name) return;
         studentsService.updateStudent(id, classroomId, name, () => {
             loadStudents();
             Alert.alert('', 'Aluno atualizado com sucesso!');
@@ -101,6 +103,9 @@ export function StudentsScreen({ route, navigation }) {
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
+                    <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                        <Icon name='arrow-left' type='font-awesome' size={24} color='#6b6b6b' />
+                    </TouchableOpacity>
                     <Text style={styles.title}>Alunos - {classroomName}</Text>
                 </View>
                 <View style={styles.inputContainer}>
@@ -232,6 +237,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingBottom: 0,
     },
+    header: {
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
+    },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -254,7 +270,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#6b6b6b',
         textAlign: 'center',
-        marginBottom: 20,
     },
     modalOverlay: {
         flex: 1,

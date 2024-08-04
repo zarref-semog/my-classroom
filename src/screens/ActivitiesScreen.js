@@ -58,6 +58,7 @@ export function ActivitiesScreen({ navigation }) {
     );
 
     function addActivity(classroomId, description) {
+        if (!classroomId || !description) return;
         activitiesService.addActivity(classroomId, description, () => {
             loadActivities();
             Alert.alert('', 'Atividade adicionada com sucesso!');
@@ -65,6 +66,7 @@ export function ActivitiesScreen({ navigation }) {
     }
 
     function updateActivity(id, classroomId, description, status) {
+        if (!classroomId || !description || !status) return;
         activitiesService.updateActivity(id, classroomId, description, status, () => {
             loadActivities();
             Alert.alert('', 'Atividade atualizada com sucesso!');

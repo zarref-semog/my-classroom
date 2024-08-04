@@ -77,6 +77,9 @@ export function NewAttendancesStudentsScreen({ route, navigation }) {
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
+                    <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                        <Icon name='arrow-left' type='font-awesome' size={24} color='#6b6b6b' />
+                    </TouchableOpacity>
                     <Text style={styles.title}>Chamada - {classroomName}</Text>
                 </View>
                 <FlatList
@@ -112,6 +115,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 16,
     },
+    header: {
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
+    },
     input: {
         flex: 1,
         height: 50,
@@ -129,7 +143,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#6b6b6b',
         textAlign: 'center',
-        marginBottom: 20,
     },
     modalOverlay: {
         flex: 1,
@@ -254,6 +267,6 @@ const styles = StyleSheet.create({
     },
     radioButtonText: {
         color: 'white',
-        fontWeight:  'bold',
+        fontWeight: 'bold',
     }
 });

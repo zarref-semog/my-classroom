@@ -40,6 +40,7 @@ function MyClassroomTabs() {
           backgroundColor: '#4a90e2'
         },
         headerShown: false,
+        tabBarShowLabel: false
       })}
     >
       <Tab.Screen name='Classrooms' component={ClassroomsScreen} options={{unmountOnBlur: true}} />

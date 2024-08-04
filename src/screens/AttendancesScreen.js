@@ -3,6 +3,7 @@ import { View, Text, Alert, TextInput, StyleSheet, FlatList, Pressable, Modal, T
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AttendancesService } from '../services/AttendancesService';
 import { Icon } from 'react-native-elements';
+import { StudentsService } from '../services/StudentsService';
 
 const Item = ({ item, classroomName, navigation, selected, onPress, setModalContent }) => {
     return (
@@ -37,6 +38,7 @@ export function AttendancesScreen({ route, navigation }) {
     const { classroomId, classroomName } = route.params;
 
     const attendancesService = AttendancesService();
+    const studentsService = StudentsService();
 
     const filteredAttendances = attendances.filter(att =>
         att.date.toLowerCase().includes(search.toLowerCase())
@@ -69,10 +71,24 @@ export function AttendancesScreen({ route, navigation }) {
         setModalVisible(true);
     }
 
+    function checkStudents() {
+        studentsService.getStudents(classroomId, (data) => {
+            console.log(data);
+            if (data.length > 0) {
+                navigation.navigate('NewAttendancesStudents', { classroomId, classroomName });
+            } else {
+                Alert.alert('Ação Indisponível', 'Esta turma não possui alunos matriculados!')
+            }
+        })
+    }
+
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
+                    <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                        <Icon name='arrow-left' type='font-awesome' size={24} color='#6b6b6b' />
+                    </TouchableOpacity>
                     <Text style={styles.title}>Chamadas - {classroomName}</Text>
                 </View>
                 <View style={styles.inputContainer}>
@@ -82,9 +98,7 @@ export function AttendancesScreen({ route, navigation }) {
                         value={search}
                         placeholder='Buscar Chamada'
                     />
-                    <TouchableOpacity style={styles.addButton} onPress={() => {
-                        navigation.navigate('NewAttendancesStudents', { classroomId, classroomName });
-                    }}>
+                    <TouchableOpacity style={styles.addButton} onPress={() => checkStudents()}>
                         <Icon name='plus-square' type='font-awesome' color='white' />
                         <Text style={styles.addButtonText}>Adicionar</Text>
                     </TouchableOpacity>
@@ -153,6 +167,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 16,
     },
+    header: {
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
+    },
     input: {
         flex: 1,
         height: 50,
@@ -170,7 +195,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#6b6b6b',
         textAlign: 'center',
-        marginBottom: 20,
     },
     modalOverlay: {
         flex: 1,
@@ -189,7 +213,6 @@ const styles = StyleSheet.create({
         color: '#6b6b6b',
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 20
     },
     modalText: {
         fontSize: 16,

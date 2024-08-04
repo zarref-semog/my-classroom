@@ -87,15 +87,29 @@ export function SchedulesScreen() {
 
 
   function addSchedule(classroomId, weekDay, startTime, endTime) {
+    if (!classroomId || !weekDay || !startTime || !endTime) {
+      setModalVisible(false);
+      return;
+    }
+    if (!checkStartTime(startTime)) return;
+    if (!checkEndTime(endTime)) return;
     schedulesService.addSchedule(classroomId, weekDay, startTime, endTime, () => {
       loadSchedules();
+      setModalVisible(false);
       Alert.alert('', 'Agenda adicionada com sucesso!');
     });
   }
 
   function updateSchedule(id, classroomId, weekDay, startTime, endTime) {
+    if (!classroomId || !weekDay || !startTime || !endTime) {
+      setModalVisible(false);
+      return;
+    };
+    if (!checkStartTime(startTime)) return;
+    if (!checkEndTime(endTime)) return;
     schedulesService.updateSchedule(id, classroomId, weekDay, startTime, endTime, () => {
       loadSchedules();
+      setModalVisible(false);
       Alert.alert('', 'Agenda atualizada com sucesso!');
     });
   }
@@ -128,6 +142,29 @@ export function SchedulesScreen() {
     setModalContent(content);
     setModalVisible(true);
   }
+
+  const validateTime = (time) => {
+    const [hours, minutes] = time.split(':');
+    const isValid =
+      hours >= '00' && hours <= '23' && minutes >= '00' && minutes <= '59';
+    return isValid;
+  };
+
+  const checkStartTime = (text) => {
+    if (!validateTime(text)) {
+      Alert.alert('Hora inválida', 'Por favor, insira uma hora entre 00:00 e 23:59');
+      return false;
+    }
+    return true;
+  };
+
+  const checkEndTime = (text) => {
+    if (!validateTime(text)) {
+      Alert.alert('Hora inválida', 'Por favor, insira uma hora entre 00:00 e 23:59');
+      return false;
+    }
+    return true;
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
@@ -197,10 +234,7 @@ export function SchedulesScreen() {
               <View style={styles.modalButtonContainer}>
                 <TouchableOpacity
                   style={[styles.button, styles.safeButton]}
-                  onPress={() => {
-                    addSchedule(classroomId, weekDay, startTime, endTime)
-                    setModalVisible(false);
-                  }}
+                  onPress={() => addSchedule(classroomId, weekDay, startTime, endTime)}
                 >
                   <Text style={styles.buttonText}>Salvar</Text>
                 </TouchableOpacity>
@@ -247,10 +281,7 @@ export function SchedulesScreen() {
               <View style={styles.modalButtonContainer}>
                 <TouchableOpacity
                   style={[styles.button, styles.safeButton]}
-                  onPress={() => {
-                    updateSchedule(id, classroomId, weekDay, startTime, endTime);
-                    setModalVisible(false);
-                  }}
+                  onPress={() => updateSchedule(id, classroomId, weekDay, startTime, endTime)}
                 >
                   <Text style={styles.buttonText}>Salvar</Text>
                 </TouchableOpacity>
@@ -304,7 +335,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 10,
     alignItems: 'center',
     marginBottom: 16,
     paddingVertical: 10

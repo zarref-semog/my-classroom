@@ -84,6 +84,7 @@ export function ClassroomsScreen({ navigation }) {
 
 
     function addClassroom(name) {
+        if (!name) return;
         classroomsService.addClassroom(name, () => {
             loadClassrooms();
             Alert.alert('', 'Sala de aula adicionada com sucesso!');
@@ -91,6 +92,7 @@ export function ClassroomsScreen({ navigation }) {
     }
 
     function updateClassroom(id, name) {
+        if (!name) return;
         classroomsService.updateClassroom(id, name, () => {
             loadClassrooms();
             Alert.alert('', 'Sala de aula atualizada com sucesso!');
