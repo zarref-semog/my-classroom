@@ -38,9 +38,11 @@ export default async function initializeDatabase(db) {
 
         CREATE TABLE IF NOT EXISTS Schedules (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            classroom_id INTEGER,
+            week_day TEXT,
             start_time TEXT,
             end_time TEXT,
-            week_day INTEGER
+            FOREIGN KEY (classroom_id) REFERENCES Classrooms(id)
         );
 
         CREATE TABLE IF NOT EXISTS Attendances_Students (

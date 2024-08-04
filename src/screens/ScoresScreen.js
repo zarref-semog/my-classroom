@@ -11,7 +11,7 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
                 <Text numberOfLines={1} style={styles.listTitle}>{item.student_name}</Text>
                 {selected === item.id ? (
                     <View style={{ flexDirection: 'row', gap: 10 }}>
-                        <Pressable onPress={() => setModalContent('updateScore', item)}>
+                        <Pressable style={styles.listButton} onPress={() => setModalContent('updateScore', item)}>
                             <Icon name='pencil' type='font-awesome' color='white' />
                         </Pressable>
                     </View>
@@ -39,6 +39,11 @@ export function ScoresScreen({ route }) {
     useEffect(() => {
         loadScores();
     }, []);
+
+    const filteredScores = scores.filter(score =>
+        score.student_name.toLowerCase().includes(search.toLowerCase()) ||
+        String(score.score).toLowerCase().includes(search.toLowerCase())
+    );
 
     function loadScores() {
         scoresService.getScores(assessmentId, (data) => {
@@ -82,7 +87,7 @@ export function ScoresScreen({ route }) {
                     />
                 </View>
                 <FlatList
-                    data={scores}
+                    data={filteredScores}
                     renderItem={({ item }) => (
                         <Item
                             item={item}
@@ -148,7 +153,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        height: 40,
+        height: 50,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 5,
@@ -218,7 +223,7 @@ const styles = StyleSheet.create({
         gap: 10,
         borderRadius: 5,
         backgroundColor: '#4a90e2',
-        height: 40,
+        height: 50,
         paddingVertical: 5,
         paddingHorizontal: 10
     },

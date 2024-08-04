@@ -123,7 +123,7 @@ export function ClassroomsScreen({ navigation }) {
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View>
-                    <Text style={styles.title}>Minhas Turmas</Text>
+                    <Text style={styles.title}>Turmas</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        height: 40,
+        height: 50,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 5,
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
         gap: 10,
         borderRadius: 5,
         backgroundColor: '#4a90e2',
-        height: 40,
+        height: 50,
         paddingVertical: 5,
         paddingHorizontal: 10
     },

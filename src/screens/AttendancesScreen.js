@@ -12,10 +12,10 @@ const Item = ({ item, classroomName, navigation, selected, onPress, setModalCont
                 {
                     selected === item.id && (
                         <View style={{ flexDirection: 'row', gap: 20 }}>
-                            <Pressable onPress={() => navigation.navigate('AttendancesStudents', { attendanceId: item.id, attendanceDate: item.date, classroomName: classroomName })}>
+                            <Pressable style={styles.listButton} onPress={() => navigation.navigate('AttendancesStudents', { attendanceId: item.id, attendanceDate: item.date, classroomName: classroomName })}>
                                 <Icon name='eye' type='font-awesome' color='white' />
                             </Pressable>
-                            <Pressable onPress={() => { setModalContent('deleteAttendance', item) }}>
+                            <Pressable style={styles.listButton} onPress={() => { setModalContent('deleteAttendance', item) }}>
                                 <Icon name='trash' type='font-awesome' color='white' />
                             </Pressable>
                         </View>
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        height: 40,
+        height: 50,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 5,
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         gap: 10,
         borderRadius: 5,
         backgroundColor: '#4a90e2',
-        height: 40,
+        height: 50,
         paddingVertical: 5,
         paddingHorizontal: 10
     },

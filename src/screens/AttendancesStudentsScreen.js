@@ -31,6 +31,11 @@ export function AttendancesStudentsScreen({ route, navigation }) {
         });
     };
 
+    const filteredAttendancesStudents = attendancesStudents.filter(att =>
+        att.student_name.toLowerCase().includes(search.toLowerCase()) ||
+        att.status.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
@@ -46,7 +51,7 @@ export function AttendancesStudentsScreen({ route, navigation }) {
                     />
                 </View>
                 <FlatList
-                    data={attendancesStudents}
+                    data={filteredAttendancesStudents}
                     renderItem={({ item }) => (<Item item={item} />)}
                     keyExtractor={item => item.id}
                     style={styles.list}
@@ -70,7 +75,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        height: 40,
+        height: 50,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 5,
@@ -140,7 +145,7 @@ const styles = StyleSheet.create({
         gap: 10,
         borderRadius: 5,
         backgroundColor: '#4a90e2',
-        height: 40,
+        height: 50,
         paddingVertical: 5,
         paddingHorizontal: 10
     },

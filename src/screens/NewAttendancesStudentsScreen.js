@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        height: 40,
+        height: 50,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 5,

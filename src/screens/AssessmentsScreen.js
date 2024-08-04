@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        height: 40,
+        height: 50,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 5,
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
         gap: 10,
         borderRadius: 5,
         backgroundColor: '#4a90e2',
-        height: 40,
+        height: 50,
         paddingVertical: 5,
         paddingHorizontal: 10
     },

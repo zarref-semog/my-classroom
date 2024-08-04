@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
-const DropdownComponent = ({ data, value, setValue }) => {
+const DropdownComponent = ({ placeholder, data, value, setValue }) => {
   const renderItem = item => {
     return (
       <View style={styles.item}>
@@ -23,7 +23,7 @@ const DropdownComponent = ({ data, value, setValue }) => {
       maxHeight={300}
       labelField="label"
       valueField="value"
-      placeholder="Select item"
+      placeholder={placeholder}
       searchPlaceholder="Search..."
       value={value}
       onChange={item => {
@@ -39,21 +39,10 @@ export default DropdownComponent;
 const styles = StyleSheet.create({
   dropdown: {
     width: '100%',
-    margin: 16,
-    marginTop: 0,
     height: 50,
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 5,
     padding: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-
-    elevation: 2,
   },
   icon: {
     marginRight: 5,

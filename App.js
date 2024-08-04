@@ -42,9 +42,9 @@ function MyClassroomTabs() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name='Classrooms' component={ClassroomsScreen} />
-      <Tab.Screen name='Activities' component={ActivitiesScreen} />
-      <Tab.Screen name='Schedule' component={SchedulesScreen} />
+      <Tab.Screen name='Classrooms' component={ClassroomsScreen} options={{unmountOnBlur: true}} />
+      <Tab.Screen name='Activities' component={ActivitiesScreen} options={{unmountOnBlur: true}} />
+      <Tab.Screen name='Schedule' component={SchedulesScreen} options={{unmountOnBlur: true}} />
     </Tab.Navigator>
   );
 }

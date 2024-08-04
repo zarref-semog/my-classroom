@@ -13,10 +13,10 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
                     {
                         selected === item.id ? (
                             <>
-                                <Pressable onPress={() => setModalContent('updateStudent', item)}>
+                                <Pressable style={styles.listButton} onPress={() => setModalContent('updateStudent', item)}>
                                     <Icon name='pencil' type='font-awesome' color='white' />
                                 </Pressable>
-                                <Pressable onPress={() => setModalContent('deleteStudent', item)}>
+                                <Pressable style={styles.listButton} onPress={() => setModalContent('deleteStudent', item)}>
                                     <Icon name='trash' type='font-awesome' color='white' />
                                 </Pressable>
                             </>
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        height: 40,
+        height: 50,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 5,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
         gap: 10,
         borderRadius: 5,
         backgroundColor: '#4a90e2',
-        height: 40,
+        height: 50,
         paddingVertical: 5,
         paddingHorizontal: 10
     },

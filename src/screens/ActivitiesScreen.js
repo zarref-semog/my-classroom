@@ -53,6 +53,9 @@ export function ActivitiesScreen({ navigation }) {
         });
     };
 
+    const filteredActivities = activities.filter(act =>
+        act.classroom_name.toLowerCase().includes(search.toLowerCase())
+    );
 
     function addActivity(classroomId, description) {
         activitiesService.addActivity(classroomId, description, () => {
@@ -109,7 +112,7 @@ export function ActivitiesScreen({ navigation }) {
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#f4c095' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Minhas Atividades</Text>
+                    <Text style={styles.title}>Atividades</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -124,7 +127,7 @@ export function ActivitiesScreen({ navigation }) {
                     </TouchableOpacity>
                 </View>
                 <FlatList
-                    data={activities}
+                    data={filteredActivities}
                     renderItem={({ item }) => (
                         <Item
                             navigation={navigation}
@@ -148,7 +151,9 @@ export function ActivitiesScreen({ navigation }) {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>Nova Atividade</Text>
-                            <DropdownComponent data={menu} value={classroomId} setValue={setClassroomId} />
+                            <View style={styles.dropdownContainer}>
+                                <DropdownComponent placeholder='Selecione a Turma' data={menu} value={classroomId} setValue={setClassroomId} />
+                            </View>
                             <TextInput
                                 textAlignVertical='top'
                                 multiline={true}
@@ -182,7 +187,7 @@ export function ActivitiesScreen({ navigation }) {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>Editar Atividade</Text>
-                            <DropdownComponent data={menu} value={classroomId} setValue={setClassroomId} />
+                            <DropdownComponent placeholder='Selecione a Turma' data={menu} value={classroomId} setValue={setClassroomId} />
                             <TextInput
                                 textAlignVertical='top'
                                 multiline={true}
@@ -271,7 +276,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        height: 40,
+        height: 50,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 5,
@@ -319,6 +324,10 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         padding: 10,
     },
+    dropdownContainer: {
+        marginBottom: 10,
+        width: '100%',
+    },
     modalButtonContainer: {
         marginTop: 20,
         flexDirection: 'row',
@@ -341,7 +350,7 @@ const styles = StyleSheet.create({
         gap: 10,
         borderRadius: 5,
         backgroundColor: '#4a90e2',
-        height: 40,
+        height: 50,
         paddingVertical: 5,
         paddingHorizontal: 10,
     },
