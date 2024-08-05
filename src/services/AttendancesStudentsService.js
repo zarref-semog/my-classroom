@@ -38,7 +38,7 @@ export function AttendancesStudentsService() {
         try {
             const result = await db.getAllAsync(`
                 SELECT 
-                    Attendances_Students.id AS id,
+                    Attendances_Students.id,
                     Attendances_Students.attendance_id,
                     Attendances_Students.student_id AS student_id,
                     Attendances_Students.status,

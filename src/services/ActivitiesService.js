@@ -5,7 +5,7 @@ export function ActivitiesService() {
     const db = useSQLiteContext()
 
     const addActivity = async (classroom_id, description, callback) => {
-        const statement = await db.prepareAsync("INSERT INTO Activities (classroom_id, description, status) VALUES ($classroom_id, $description, 'aberta');");
+        const statement = await db.prepareAsync("INSERT INTO Activities (classroom_id, description) VALUES ($classroom_id, $description);");
         try {
             const result = await statement.executeAsync({ $classroom_id: classroom_id, $description: description });
             callback(result);
@@ -20,10 +20,9 @@ export function ActivitiesService() {
         try {
             const result = await db.getAllAsync(`
                 SELECT 
-                    Activities.id AS id,
+                    Activities.id,
                     Activities.classroom_id,
                     Activities.description,
-                    Activities.status AS classroom_status,
                     Classrooms.id AS classroom_id,
                     Classrooms.name AS classroom_name
                 FROM 
@@ -37,10 +36,10 @@ export function ActivitiesService() {
         }
     };
 
-    const updateActivity = async (id, classroom_id, description, status, callback) => {
-        const statement = await db.prepareAsync('UPDATE Activities SET classroom_id = $classroom_id, description = $description, status = $status WHERE id = $id;');
+    const updateActivity = async (id, classroom_id, description, callback) => {
+        const statement = await db.prepareAsync('UPDATE Activities SET classroom_id = $classroom_id, description = $description WHERE id = $id;');
         try {
-            const result = await statement.executeAsync({ $classroom_id: classroom_id, $description: description, $status: status, $id: id });
+            const result = await statement.executeAsync({ $classroom_id: classroom_id, $description: description, $id: id });
             callback(result);
         } catch (e) {
             console.error('Error: ', e);

@@ -33,7 +33,6 @@ export default async function initializeDatabase(db) {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             classroom_id INTEGER,
             description TEXT,
-            status TEXT,
             FOREIGN KEY (classroom_id) REFERENCES Classrooms(id)
         );
 

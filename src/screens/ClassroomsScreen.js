@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Alert, TextInput, Modal, FlatList, TouchableOpacity, Pressable, StyleSheet } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ClassroomsService } from '../services/ClassroomsService';
 import { Icon } from 'react-native-elements';
@@ -76,6 +77,12 @@ export function ClassroomsScreen({ navigation }) {
     useEffect(() => {
         loadClassrooms();
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            loadClassrooms();
+        }, [loadClassrooms])
+    );
 
     const loadClassrooms = () => {
         classroomsService.getClassrooms((data) => {

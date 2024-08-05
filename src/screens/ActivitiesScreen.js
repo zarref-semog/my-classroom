@@ -32,7 +32,6 @@ export function ActivitiesScreen({ navigation }) {
     const [id, setId] = useState('');
     const [classroomId, setClassroomId] = useState('');
     const [description, setDescription] = useState('');
-    const [status, setStatus] = useState([]);
     const [activities, setActivities] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -65,9 +64,9 @@ export function ActivitiesScreen({ navigation }) {
         });
     }
 
-    function updateActivity(id, classroomId, description, status) {
-        if (!classroomId || !description || !status) return;
-        activitiesService.updateActivity(id, classroomId, description, status, () => {
+    function updateActivity(id, classroomId, description) {
+        if (!classroomId || !description) return;
+        activitiesService.updateActivity(id, classroomId, description, () => {
             loadActivities();
             Alert.alert('', 'Atividade atualizada com sucesso!');
         });
@@ -98,12 +97,10 @@ export function ActivitiesScreen({ navigation }) {
             setId('');
             setClassroomId('');
             setDescription('');
-            setStatus('');
         } else {
             setId(item.id);
             setClassroomId(item.classroom_id)
             setDescription(item.description);
-            setStatus(item.status);
         }
         convertData();
         setModalContent(content);
@@ -189,7 +186,9 @@ export function ActivitiesScreen({ navigation }) {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>Editar Atividade</Text>
-                            <DropdownComponent placeholder='Selecione a Turma' data={menu} value={classroomId} setValue={setClassroomId} />
+                            <View style={styles.dropdownContainer}>
+                                <DropdownComponent placeholder='Selecione a Turma' data={menu} value={classroomId} setValue={setClassroomId} />
+                            </View>
                             <TextInput
                                 textAlignVertical='top'
                                 multiline={true}
@@ -387,6 +386,7 @@ const styles = StyleSheet.create({
     },
     listTitle: {
         color: 'white',
+        fontSize: 16,
         fontWeight: 'bold',
         width: '65%',
     },

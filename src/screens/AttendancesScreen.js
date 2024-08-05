@@ -73,7 +73,6 @@ export function AttendancesScreen({ route, navigation }) {
 
     function checkStudents() {
         studentsService.getStudents(classroomId, (data) => {
-            console.log(data);
             if (data.length > 0) {
                 navigation.navigate('NewAttendancesStudents', { classroomId, classroomName });
             } else {
@@ -191,6 +190,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
+        maxWidth: '80%',
         fontSize: 24,
         fontWeight: 'bold',
         color: '#6b6b6b',

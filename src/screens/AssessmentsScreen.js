@@ -17,7 +17,8 @@ const Item = ({ navigation, item, classroomId, classroomName, selected, onPress,
                             classroomId: classroomId,
                             classroomName: classroomName,
                             assessmentId: item.id,
-                            assessmentName: item.name
+                            assessmentName: item.name,
+                            passingScore: item.passing_score
                         });
                     }}>
                         <Icon name='address-book' type='font-awesome' color='white' />
@@ -298,6 +299,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
+        maxWidth: '80%',
         fontSize: 24,
         fontWeight: 'bold',
         color: '#6b6b6b',

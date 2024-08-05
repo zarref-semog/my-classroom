@@ -72,6 +72,7 @@ export function StudentsScreen({ route, navigation }) {
 
     function updateStudent(id, name, feedback) {
         if (!name) return;
+        if (!feedback) feedback = 'Nenhuma Observação.';
         studentsService.updateStudent(id, classroomId, name, feedback, () => {
             loadStudents();
             Alert.alert('', 'Aluno atualizado com sucesso!');
@@ -198,7 +199,7 @@ export function StudentsScreen({ route, navigation }) {
                                 <TouchableOpacity
                                     style={[styles.button, styles.safeButton]}
                                     onPress={() => {
-                                        updateStudent(id, name);
+                                        updateStudent(id, name, feedback);
                                         setModalVisible(false);
                                     }}
                                 >
@@ -304,6 +305,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
+        maxWidth: '80%',
         fontSize: 24,
         fontWeight: 'bold',
         color: '#6b6b6b',

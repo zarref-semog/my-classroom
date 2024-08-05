@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
+        maxWidth: '80%',
         fontSize: 24,
         fontWeight: 'bold',
         color: '#6b6b6b',

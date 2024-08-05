@@ -4,7 +4,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScoresService } from '../services/ScoresService';
 import { Icon } from 'react-native-elements';
 
-const Item = ({ item, selected, onPress, setModalContent }) => {
+const Item = ({ item, selected, onPress, setModalContent, passingScore }) => {
+    const scoreColor = item.score < passingScore ? '#db9795' : '#95b6de';
+
     return (
         <TouchableOpacity onPress={onPress}>
             <View style={[styles.listItem, styles.listContainer]}>
@@ -16,12 +18,15 @@ const Item = ({ item, selected, onPress, setModalContent }) => {
                         </Pressable>
                     </View>
                 ) : (
-                    <Text style={styles.listInfo}>{item.score.toString().replace('.', ',')}</Text>
+                    <Text style={[styles.listInfo, { color: scoreColor }]}>
+                        {item.score.toString().replace('.', ',')}
+                    </Text>
                 )}
             </View>
         </TouchableOpacity>
     );
 };
+
 
 export function ScoresScreen({ route, navigation }) {
     const [search, setSearch] = useState('');
@@ -32,7 +37,7 @@ export function ScoresScreen({ route, navigation }) {
     const [modalContent, setModalContent] = useState('');
     const [scores, setScores] = useState([]);
 
-    const { classroomName, assessmentId, assessmentName } = route.params;
+    const { classroomName, assessmentId, assessmentName, passingScore } = route.params;
 
     const scoresService = ScoresService();
 
@@ -96,6 +101,7 @@ export function ScoresScreen({ route, navigation }) {
                         <Item
                             item={item}
                             selected={selectedItem}
+                            passingScore={passingScore}
                             onPress={() => handleSelectedItem(item)}
                             setModalContent={handleModalContent}
                         />
@@ -179,6 +185,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
+        maxWidth: '80%',
         fontSize: 24,
         fontWeight: 'bold',
         color: '#6b6b6b',

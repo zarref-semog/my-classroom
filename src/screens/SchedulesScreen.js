@@ -64,12 +64,19 @@ export function SchedulesScreen() {
   useEffect(() => {
     loadSchedules();
     convertData();
+    setTodayAsSearch();
   }, []);
 
   const loadSchedules = () => {
     schedulesService.getSchedules((data) => {
       setSchedules(data);
     });
+  };
+
+  const setTodayAsSearch = () => {
+    const today = new Date().getDay();
+    const weekDay = weekDays[today].value;
+    setSearch(weekDay);
   };
 
   function convertData() {

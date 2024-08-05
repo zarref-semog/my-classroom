@@ -53,13 +53,13 @@ const Stack = createNativeStackNavigator();
 function MyClassroomStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name='ClassroomTabs' component={MyClassroomTabs} />
-      <Stack.Screen name='Students' component={StudentsScreen} />
-      <Stack.Screen name='Attendances' component={AttendancesScreen} />
-      <Stack.Screen name='AttendancesStudents' component={AttendancesStudentsScreen} />
-      <Stack.Screen name='NewAttendancesStudents' component={NewAttendancesStudentsScreen} />
-      <Stack.Screen name='Assessments' component={AssessmentsScreen} />
-      <Stack.Screen name='Scores' component={ScoresScreen} />
+      <Stack.Screen name='ClassroomTabs' component={MyClassroomTabs} options={{unmountOnBlur: true}} />
+      <Stack.Screen name='Students' component={StudentsScreen} options={{unmountOnBlur: true}} />
+      <Stack.Screen name='Attendances' component={AttendancesScreen} options={{unmountOnBlur: true}} />
+      <Stack.Screen name='AttendancesStudents' component={AttendancesStudentsScreen} options={{unmountOnBlur: true}} />
+      <Stack.Screen name='NewAttendancesStudents' component={NewAttendancesStudentsScreen} options={{unmountOnBlur: true}} />
+      <Stack.Screen name='Assessments' component={AssessmentsScreen} options={{unmountOnBlur: true}} />
+      <Stack.Screen name='Scores' component={ScoresScreen} options={{unmountOnBlur: true}} />
     </Stack.Navigator>
   );
 }
