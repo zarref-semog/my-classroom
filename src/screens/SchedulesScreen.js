@@ -258,7 +258,7 @@ export function SchedulesScreen() {
         {modalContent === 'updateSchedule' && (
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Editar Aluno</Text>
+              <Text style={styles.modalTitle}>Editar Agenda</Text>
               <View style={styles.dropdownContainer}>
                 <DropdownComponent data={weekDays} value={weekDay} setValue={setWeekDay} />
               </View>
