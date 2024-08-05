@@ -18,7 +18,18 @@ export function ClassroomsService() {
 
     const getClassrooms = async (callback) => {
         try {
-            const result = await db.getAllAsync('SELECT * FROM Classrooms;');
+            const result = await db.getAllAsync(`
+                SELECT
+                    Classrooms.id,
+                    Classrooms.name,
+                    COUNT(Students.id) AS total_students
+                FROM
+                    Classrooms
+                LEFT JOIN
+                    Students ON Classrooms.id = Students.classroom_id
+                GROUP BY
+                    Classrooms.id, Classrooms.name;
+            `);
             callback(result);
         } catch (e) {
             console.error('Error: ', e);

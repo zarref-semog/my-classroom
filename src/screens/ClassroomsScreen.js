@@ -9,7 +9,7 @@ const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
     <TouchableOpacity style={styles.listContainer} onPress={onPress}>
         <View style={styles.listItem}>
             <Text numberOfLines={1} style={styles.listTitle}>{item.name}</Text>
-            {selected === item.id && (
+            {selected === item.id ? (
                 <View style={styles.listAction}>
                     <Pressable style={styles.listButton} onPress={() => setModalContent('updateClassroom', item)}>
                         <Icon name='pencil' type='font-awesome' color='white' />
@@ -51,6 +51,11 @@ const Item = ({ navigation, item, selected, onPress, setModalContent }) => (
                             </MenuOption>
                         </MenuOptions>
                     </Menu>
+                </View>
+            ) : (
+                <View style={styles.listAction}>
+                    <Icon name='group' type='font-awesome' color='white' />
+                    <Text style={styles.listInfo}>{item.total_students}</Text>
                 </View>
             )}
         </View>
@@ -372,6 +377,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         width: '68%',
+    },
+    listInfo: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     listAction: {
         flexDirection: 'row',

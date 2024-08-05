@@ -2,20 +2,19 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import { ClassroomsScreen } from './src/screens/ClassroomsScreen';
 import { SchedulesScreen } from './src/screens/SchedulesScreen';
 import { ActivitiesScreen } from './src/screens/ActivitiesScreen';
 import { ScoresScreen } from './src/screens/ScoresScreen';
 import { SQLiteProvider } from 'expo-sqlite';
 import { MenuProvider } from 'react-native-popup-menu';
-import initializeDatabase from './src/database/database-init';
 import { AttendancesStudentsScreen } from './src/screens/AttendancesStudentsScreen';
 import { NewAttendancesStudentsScreen } from './src/screens/NewAttendancesStudentsScreen';
 import { AssessmentsScreen } from './src/screens/AssessmentsScreen';
 import { AttendancesScreen } from './src/screens/AttendancesScreen';
 import { StudentsScreen } from './src/screens/StudentsScreen';
 import { Icon } from 'react-native-elements';
+import initializeDatabase from './src/database/initializeDatabase';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,7 +35,6 @@ function MyClassroomTabs() {
         tabBarInactiveTintColor: '#7dace3',
         tabBarStyle: {
           height: 60,
-          paddingBottom: 10,
           backgroundColor: '#4a90e2'
         },
         headerShown: false,

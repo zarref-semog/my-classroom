@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AttendancesStudentsService } from '../services/AttendancesStudentsService';
+import { Icon } from 'react-native-elements';
 
 const Item = ({ item }) => {
     return (
