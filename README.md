@@ -63,7 +63,7 @@ src/
 
 ## Diagrama de Casos de Uso
 
-
+![Diagrama de Casos de Uso](src/assets/docs/Diagrama Entidade-Relacionamento.drawio.png)
 
 ## Diagrama de Entidades-Relacionamentos
 
