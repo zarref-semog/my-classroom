@@ -71,4 +71,4 @@ src/
 
 ## Protótipo
 
-![Protótipo/Wireframe]()
+![Protótipo/Wireframe](https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Wireframe.drawio.png)
