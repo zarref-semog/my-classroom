@@ -63,7 +63,7 @@ src/
 
 ## Diagrama de Casos de Uso
 
-![Diagrama de Casos de Uso](src/assets/docs/Diagrama Entidade-Relacionamento.drawio.png)
+![Diagrama de Casos de Uso](https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Diagrama%20de%20Casos%20de%20Uso.drawio.png)
 
 ## Diagrama de Entidades-Relacionamentos
 
