@@ -67,8 +67,8 @@ src/
 
 ## Diagrama de Entidades-Relacionamentos
 
-
+![Diagrama de Entidades-Relacionamentos](https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Diagrama%20Entidade-Relacionamento.drawio.png)
 
 ## Protótipo
 
-
+![Protótipo/Wireframe]()
