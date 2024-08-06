@@ -63,12 +63,12 @@ src/
 
 ## Diagrama de Casos de Uso
 
-
+<img src="https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Diagrama%20de%20Casos%20de%20Uso.drawio.png" alt="Diagrama de Caso de Uso" width="500"/>
 
 ## Diagrama de Entidades-Relacionamentos
 
-
+<img src="https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Diagrama%20Entidade-Relacionamento.drawio.png" alt="Diagrama de Caso de Uso" width="500"/>
 
 ## Protótipo
 
-
+<img src="https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Wireframe.drawio.png" alt="Diagrama de Caso de Uso" width="500"/>
