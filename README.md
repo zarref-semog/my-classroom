@@ -72,3 +72,7 @@ src/
 ## Protótipo
 
 <img src="https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Wireframe.drawio.png" alt="Diagrama de Caso de Uso" width="500"/>
+
+## Demonstração
+
+(Link do Vídeo)[https://youtu.be/fSlkh3XCb-I]
