@@ -63,12 +63,12 @@ src/
 
 ## Diagrama de Casos de Uso
 
-![Diagrama de Casos de Uso](https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Diagrama%20de%20Casos%20de%20Uso.drawio.png)
+<img src="https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Diagrama%20de%20Casos%20de%20Uso.drawio.png" alt="Diagrama de Caso de Uso" width="500"/>
 
 ## Diagrama de Entidades-Relacionamentos
 
-![Diagrama de Entidades-Relacionamentos](https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Diagrama%20Entidade-Relacionamento.drawio.png)
+<img src="https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Diagrama%20Entidade-Relacionamento.drawio.png" alt="Diagrama de Caso de Uso" width="500"/>
 
 ## Protótipo
 
-![Protótipo/Wireframe](https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Wireframe.drawio.png)
+<img src="https://github.com/zarref-semog/my-classroom/blob/main/src/assets/docs/Wireframe.drawio.png" alt="Diagrama de Caso de Uso" width="500"/>
