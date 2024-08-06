@@ -75,4 +75,4 @@ src/
 
 ## Demonstração
 
-(Link do Vídeo)[https://youtu.be/fSlkh3XCb-I]
+[Link do Vídeo](https://youtu.be/fSlkh3XCb-I)
