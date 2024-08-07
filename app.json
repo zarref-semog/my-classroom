@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "my-classroom",
+    "name": "My Classroom",
     "slug": "my-classroom",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,10 +18,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-logo.png",
         "backgroundColor": "#4a90e2"
-      }
+      },
+      "package": "com.zarrefsemog.myclassroom"
     },
     "web": {
       "favicon": ""
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f29806a6-1202-447e-b411-fc80701d3e11"
+      }
+    },
+    "owner": "zarrref_semog"
   }
 }
